@@ -7,6 +7,7 @@ export function useShortener() {
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
   const [result, setResult] = useState<ShortenResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [links, setLinks] = useState<LinkRecord[]>(mockLinks);
@@ -15,6 +16,7 @@ export function useShortener() {
     if (!url.trim()) return;
     setLoading(true);
     try {
+      setError(null);
       const res = await shortenUrl({ url, slug: slug || undefined });
       setResult(res);
       if (isAuthenticated) {
@@ -23,6 +25,8 @@ export function useShortener() {
           ...prev,
         ]);
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -38,5 +42,5 @@ export function useShortener() {
 
   const totalClicks = links.reduce((sum, l) => sum + l.clicks, 0);
 
-  return { url, setUrl, slug, setSlug, result, loading, shorten, isAuthenticated, toggleAuth, links, deleteLink, totalClicks, setResult };
+  return { url, setUrl, slug, setSlug, result, loading, shorten, isAuthenticated, toggleAuth, links, deleteLink, totalClicks, setResult, error, setError };
 }

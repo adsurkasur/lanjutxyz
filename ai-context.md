@@ -5,9 +5,9 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Rename Supabase env key to NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY |
+| Task | Add graceful shortener error handling in hook and form |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 10:40 |
+| Last Updated | 2026-03-18 11:09 |
 | Session ID | 20260318-0920 |
 
 ## User Request
@@ -135,3 +135,11 @@ User required complete migration without interactive confirmation. Will provide 
 - **10:40** - IMPLEMENT - Started env key rename from NEXT_PUBLIC_SUPABASE_ANON_KEY to NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 - **10:41** - IMPLEMENT - Completed env key rename in .env.local, .env.example, and supabase client
 - **10:41** - GATE - Validation passed: bunx tsc --noEmit
+- **10:49** - IMPLEMENT - Fixed QR single result formatting to data URL for base64 image rendering
+- **10:49** - GATE - Validation passed: bunx tsc --noEmit
+- **10:54** - IMPLEMENT - Updated shortenUrl shortUrl template to use NEXT_PUBLIC_SHORT_BASE_URL directly
+- **11:05** - IMPLEMENT - Started shortenUrl unique slug retry logic update
+- **11:06** - IMPLEMENT - Added generateUniqueSlug with 5-attempt uniqueness check and timestamp fallback
+- **11:06** - GATE - Validation passed: bunx tsc --noEmit
+- **11:08** - IMPLEMENT - Added shortener error state handling in hook and dismissible inline/toast error UI in form
+- **11:09** - GATE - Validation passed: bunx tsc --noEmit

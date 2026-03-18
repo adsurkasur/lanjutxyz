@@ -7,6 +7,7 @@ import ShortenerForm from "@/components/ShortenerForm";
 function FormHarness({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ shortUrl: string; originalUrl: string } | null>(null);
 
   return (
@@ -18,6 +19,8 @@ function FormHarness({ isAuthenticated = false }: { isAuthenticated?: boolean })
       loading={false}
       shorten={() => setResult({ shortUrl: "tools.arinahub.com/go/demo1", originalUrl: url })}
       result={result}
+      error={error}
+      setError={setError}
       isAuthenticated={isAuthenticated}
       toggleAuth={vi.fn()}
     />

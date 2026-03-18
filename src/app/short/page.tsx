@@ -12,6 +12,8 @@ export default function ShortenerPage() {
     slug,
     setSlug,
     result,
+    error,
+    setError,
     loading,
     shorten,
     isAuthenticated,
@@ -54,6 +56,8 @@ export default function ShortenerPage() {
           loading={loading}
           shorten={shorten}
           result={result}
+          error={error}
+          setError={setError}
           isAuthenticated={isAuthenticated}
           toggleAuth={toggleAuth}
         />

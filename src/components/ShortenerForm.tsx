@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Loader2, Link as LinkIcon } from "lucide-react";
+import { Copy, Loader2, Link as LinkIcon, X } from "lucide-react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 const shortBaseUrl =
@@ -16,11 +17,19 @@ interface Props {
   loading: boolean;
   shorten: () => void;
   result: { shortUrl: string; originalUrl: string } | null;
+  error: string | null;
+  setError: (v: string | null) => void;
   isAuthenticated: boolean;
   toggleAuth: () => void;
 }
 
-export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, shorten, result, isAuthenticated, toggleAuth }: Props) {
+export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, shorten, result, error, setError, isAuthenticated, toggleAuth }: Props) {
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
   const copyUrl = () => {
     if (!result) return;
     navigator.clipboard.writeText(`https://${result.shortUrl}`);
@@ -62,6 +71,19 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
           {loading ? "Shortening..." : "Shorten"}
         </motion.button>
+
+        {error && (
+          <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
+            <p className="text-sm text-destructive">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="rounded p-1 text-destructive/80 transition-colors hover:text-destructive"
+              aria-label="Dismiss error"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       <AnimatePresence>

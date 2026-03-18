@@ -114,6 +114,22 @@ export async function generateQRBulk(
   return { succeeded: items.length, failed: 0, errors: [] };
 }
 
+async function generateUniqueSlug(): Promise<string> {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const slug = Array.from({ length: 7 }, () =>
+      chars[Math.floor(Math.random() * chars.length)]
+    ).join("");
+    const { data } = await supabase
+      .from("links")
+      .select("slug")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (!data) return slug;
+  }
+  return Date.now().toString(36);
+}
+
 // --- URL Shortener ---
 // TODO: Connect to PocketBase
 // POST /api/links
@@ -123,7 +139,7 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
     throw new Error("URL is required");
   }
 
-  const slug = req.slug || Math.random().toString(36).slice(2, 8);
+  const slug = req.slug?.trim() || await generateUniqueSlug();
   const { data, error } = await supabase
     .from("links")
     .insert({
@@ -141,7 +157,7 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
   void data;
 
   return {
-    shortUrl: `${process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/"}${slug}`,
+    shortUrl: `${process.env.NEXT_PUBLIC_SHORT_BASE_URL}${slug}`,
     slug,
     originalUrl: req.url,
   };

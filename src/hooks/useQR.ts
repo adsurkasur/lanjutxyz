@@ -30,7 +30,7 @@ export function useQRSingle() {
     setLoading(true);
     try {
       const res = await generateQRSingle({ text, logo_base64: logoBase64 });
-      setResult(res.image_base64);
+      setResult(`data:image/png;base64,${res.image_base64}`);
     } finally {
       setLoading(false);
     }
