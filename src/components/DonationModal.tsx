@@ -2,9 +2,9 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Check, Coffee, Copy, ExternalLink, Heart, QrCode, X } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 type DonationModalProps = {
@@ -32,6 +32,8 @@ type CryptoItem = {
 
 const qrisImageUrl =
   "https://purple-given-lark-169.mypinata.cloud/ipfs/bafkreihplwmmtmq6youvqcfpiks4mffrdzc54h5ymqhfiq63bzzjfdiugq";
+
+const CLOSE_DURATION_MS = 220;
 
 const paymentPlatforms: PaymentPlatform[] = [
   {
@@ -117,16 +119,34 @@ export function DonationTrigger({ onClick }: DonationTriggerProps) {
 
 export default function DonationModal({ open, onClose }: DonationModalProps) {
   const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [qrisOpen, setQrisOpen] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (open) setMounted(true);
-    if (!open) {
-      const timer = window.setTimeout(() => setMounted(false), 220);
-      return () => window.clearTimeout(timer);
+    if (open) {
+      setMounted(true);
+      const frame = window.requestAnimationFrame(() => setVisible(true));
+      return () => window.cancelAnimationFrame(frame);
     }
+
+    setVisible(false);
+    const timer = window.setTimeout(() => {
+      setMounted(false);
+      setQrisOpen(false);
+    }, CLOSE_DURATION_MS);
+
+    return () => window.clearTimeout(timer);
   }, [open]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
 
   const cryptoItems = useMemo<CryptoItem[]>(
     () => [
@@ -186,45 +206,54 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
     }
   };
 
+  const handleClose = useCallback(() => {
+    if (!mounted) return;
+    setVisible(false);
+    setQrisOpen(false);
+
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+
+    closeTimerRef.current = window.setTimeout(() => {
+      onClose();
+      closeTimerRef.current = null;
+    }, CLOSE_DURATION_MS);
+  }, [mounted, onClose]);
+
   if (!mounted) return null;
 
   return (
     <Dialog.Root
-      open={open}
+      open={mounted}
       onOpenChange={(next) => {
-        if (!next) onClose();
+        if (!next) handleClose();
       }}
     >
       <Dialog.Portal>
-        <AnimatePresence>
-          {open && (
-            <Dialog.Overlay asChild>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-              />
-            </Dialog.Overlay>
-          )}
-        </AnimatePresence>
+        <Dialog.Overlay asChild>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: visible ? 1 : 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleClose}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          />
+        </Dialog.Overlay>
 
         <Dialog.Content className="fixed inset-0 z-[60] grid place-items-center p-4">
           <VisuallyHidden.Root>
             <Dialog.Title>Support Me</Dialog.Title>
           </VisuallyHidden.Root>
 
-          <AnimatePresence>
-            {open && (
-              <motion.div
-                key="donation-modal"
-                initial={{ opacity: 0, scale: 0.95, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 8 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="pointer-events-auto relative w-full max-w-md rounded-2xl border border-border bg-card shadow-2xl"
-              >
+          <motion.div
+            key="donation-modal"
+            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            animate={{ opacity: visible ? 1 : 0, scale: visible ? 1 : 0.95, y: visible ? 0 : 8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onClick={(event) => event.stopPropagation()}
+            className="pointer-events-auto relative w-full max-w-md rounded-2xl border border-border bg-card shadow-2xl"
+          >
                 <div className="mb-4 flex items-center justify-between p-5 pb-0">
                   <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <Heart className="h-4 w-4 text-rose-400" fill="currentColor" />
@@ -270,7 +299,10 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
                         </motion.a>
                       ))}
 
-                      <Dialog.Root open={qrisOpen} onOpenChange={setQrisOpen}>
+                      <Dialog.Root
+                        open={qrisOpen}
+                        onOpenChange={setQrisOpen}
+                      >
                         <Dialog.Trigger asChild>
                           <motion.button
                             whileHover={{ scale: 1.01 }}
@@ -293,14 +325,27 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
                         </Dialog.Trigger>
 
                         <Dialog.Portal>
-                          <Dialog.Overlay className="fixed inset-0 z-[70] bg-black/50" />
-                          <Dialog.Content className="fixed left-1/2 top-1/2 z-[80] w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-5 card-glow">
+                          <Dialog.Overlay forceMount asChild>
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: qrisOpen ? 1 : 0 }}
+                              transition={{ duration: 0.2 }}
+                              className={`fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm ${qrisOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+                            />
+                          </Dialog.Overlay>
+                          <Dialog.Content forceMount asChild>
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                              animate={{ opacity: qrisOpen ? 1 : 0, scale: qrisOpen ? 1 : 0.96, y: qrisOpen ? 0 : 10 }}
+                              transition={{ duration: 0.2, ease: "easeOut" }}
+                              className={`fixed left-1/2 top-1/2 z-[80] w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-card p-5 sm:p-6 card-glow ${qrisOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+                            >
                             <VisuallyHidden.Root>
                               <Dialog.Title>QRIS</Dialog.Title>
                             </VisuallyHidden.Root>
 
                             <div className="mb-4 flex items-center justify-between">
-                              <Dialog.Title className="text-sm font-semibold text-foreground">QRIS</Dialog.Title>
+                              <Dialog.Title className="text-base font-semibold text-foreground">QRIS Payment</Dialog.Title>
                               <Dialog.Close asChild>
                                 <button
                                   className="rounded-lg p-1 text-muted-foreground transition-colors hover:text-foreground"
@@ -311,21 +356,24 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
                               </Dialog.Close>
                             </div>
                             <div className="space-y-4">
-                              <img
-                                src={qrisImageUrl}
-                                alt="QRIS payment code"
-                                className="w-full rounded-xl border border-border"
-                              />
+                              <div className="rounded-xl border border-border bg-secondary/30 p-2">
+                                <img
+                                  src={qrisImageUrl}
+                                  alt="QRIS payment code"
+                                  className="w-full rounded-lg border border-border"
+                                />
+                              </div>
                               <button
                                 type="button"
                                 onClick={() => {
                                   void downloadQris();
                                 }}
-                                className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+                                className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground"
                               >
-                                Download
+                                Download QRIS Image
                               </button>
                             </div>
+                            </motion.div>
                           </Dialog.Content>
                         </Dialog.Portal>
                       </Dialog.Root>
@@ -385,9 +433,7 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
                     Thank you for considering supporting this project! 🙏
                   </p>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </motion.div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

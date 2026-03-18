@@ -81,7 +81,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-6 card-glow"
+            className="fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-4 sm:w-[92vw] sm:p-6 card-glow"
           >
             <div className="mb-4 flex items-center justify-between">
               <Dialog.Title className="text-base font-semibold text-foreground">
@@ -105,7 +105,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   setSuccessMessage(null);
                   setCaptchaToken(null);
                 }}
-                className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                className={`rounded-md px-3 py-2.5 text-sm transition-colors sm:py-2 ${
                   activeTab === "signin" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -118,7 +118,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   setSuccessMessage(null);
                   setCaptchaToken(null);
                 }}
-                className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                className={`rounded-md px-3 py-2.5 text-sm transition-colors sm:py-2 ${
                   activeTab === "signup" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -132,14 +132,14 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 type="email"
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
               />
               <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 type="password"
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
               />
 
               {activeTab === "signup" && (

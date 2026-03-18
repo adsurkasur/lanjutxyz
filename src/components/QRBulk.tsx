@@ -68,7 +68,7 @@ export default function QRBulk() {
             }}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input py-12 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input px-4 py-8 text-center text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground sm:py-12"
           >
             <Upload className="h-6 w-6" />
             <span className="text-sm">Drop CSV file here or click to browse</span>
@@ -86,7 +86,7 @@ export default function QRBulk() {
             </div>
           )}
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-medium text-foreground">
               <FileText className="mr-1.5 inline h-4 w-4" />
               {items.length} rows loaded
@@ -112,7 +112,7 @@ export default function QRBulk() {
                   <tr key={item.id} className="border-b border-border last:border-0">
                     <td className="px-4 py-2 text-muted-foreground">{i + 1}</td>
                     <td className="px-4 py-2 font-mono text-xs">{item.id}</td>
-                    <td className="max-w-[200px] truncate px-4 py-2">{item.text || "—"}</td>
+                    <td className="max-w-[160px] truncate px-4 py-2 sm:max-w-[220px]">{item.text || "—"}</td>
                     <td className="px-4 py-2 text-muted-foreground">{item.logo_base64 ? "Yes" : "No"}</td>
                     <td className="px-4 py-2">
                       {processing && i < progress ? (
@@ -169,7 +169,7 @@ export default function QRBulk() {
             animate="show"
             className="space-y-6"
           >
-            <div className="flex gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex-1 rounded-xl border border-border bg-card p-5 text-center card-glow">
                 <p className="text-2xl font-semibold text-foreground">{summary.succeeded}</p>
                 <p className="text-xs text-muted-foreground">Succeeded</p>

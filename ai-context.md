@@ -5,14 +5,14 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Center homepage tool cards both horizontally and vertically |
+| Task | Center homepage tool cards icon + CTA within their containers |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 12:56 |
+| Last Updated | 2026-03-18 13:24 |
 | Session ID | 20260318-0920 |
 
 ## User Request
 
-> Read DonationModal and homepage first, replace forceMount modal structure to avoid body pointer lock, center homepage tool cards vertically, add cursor-pointer to navbar icon/action buttons, and run tsc validation.
+> Read listed UI files first, fix donation modal click-outside close with smooth exit and styled QRIS sub-modal, then apply mobile responsiveness polish across app pages/components and validate with tsc/build.
 
 ## Execution Plan
 
@@ -117,6 +117,16 @@ No stop conditions triggered yet.
 | src/lib/api.ts | Modified | Environment-driven API and short-link base URLs | Yes |
 | src/**/*.test.ts(x) | Created | Required unit and e2e test coverage for migration | Yes |
 | vite.config.ts and Vite entry/pages files | Deleted | Remove legacy Vite routing/runtime artifacts | Yes |
+| src/components/DonationModal.tsx | Modified | Added local visible close flow with delayed onClose and restyled animated QRIS nested modal | Yes |
+| src/components/Navbar.tsx | Modified | Mobile nav icons, compact auth actions, and responsive trigger/button layout | Yes |
+| src/app/page.tsx | Modified | Responsive hero typography and mobile spacing polish | Yes |
+| src/app/qr/page.tsx | Modified | Mobile spacing and improved tab touch targets | Yes |
+| src/app/short/page.tsx | Modified | Mobile spacing and heading scale tweaks | Yes |
+| src/components/QRSingle.tsx | Modified | Mobile input/readability and stacked result actions on small screens | Yes |
+| src/components/QRBulk.tsx | Modified | Mobile upload/table/result layout refinements | Yes |
+| src/components/ShortenerForm.tsx | Modified | Mobile-friendly input sizing and result block stacking | Yes |
+| src/components/LinkTable.tsx | Modified | Mobile card list fallback plus desktop table retention | Yes |
+| src/components/AuthModal.tsx | Modified | Smaller-screen modal spacing and control sizing updates | Yes |
 
 ## Notes
 
@@ -188,3 +198,9 @@ User required complete migration without interactive confirmation. Will provide 
 - **12:50** - IMPLEMENT - Reworked donation modal mounting to remove forceMount path and prevent persistent body pointer lock
 - **12:50** - IMPLEMENT - Centered homepage tool card content vertically and added cursor-pointer to navbar theme/support/auth actions
 - **12:51** - GATE - Validation passed: bunx tsc --noEmit
+- **12:57** - STUDY - Read all requested page/component files for modal close-flow and mobile responsiveness pass
+- **13:02** - IMPLEMENT - Updated DonationModal with local visible state, delayed onClose close handler, overlay click close, and nested QRIS modal restyle/animation
+- **13:03** - IMPLEMENT - Applied mobile responsiveness updates across Navbar, Home/QR/Short pages, QRSingle, QRBulk, ShortenerForm, LinkTable, and AuthModal
+- **13:04** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **13:05** - GATE - Re-validation passed after QRIS forceMount close animation tuning: bunx tsc --noEmit and bun run build
+- **13:24** - IMPLEMENT - Centered tool card icon and CTA by adding mx-auto to their wrappers

@@ -30,12 +30,12 @@ export default function ShortenerPage() {
       initial={pageVariants.initial}
       animate={pageVariants.animate}
       transition={pageVariants.transition}
-      className="flex-1 px-4 py-10 sm:px-6 lg:px-8"
+      className="flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8"
     >
       <div className="mx-auto max-w-tool space-y-8">
         <div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">URL Shortener</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">URL Shortener</h1>
             <p className="mt-1 text-sm text-muted-foreground">Create branded short links.</p>
           </div>
         </div>

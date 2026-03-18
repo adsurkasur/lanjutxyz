@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Moon, Sun } from "lucide-react";
+import { Home, Link as LinkIcon, LogIn, Moon, QrCode, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "@/components/AuthModal";
@@ -18,9 +18,9 @@ export default function Navbar() {
   const { user, signOut } = useAuth();
 
   const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/qr", label: "QR" },
-    { href: "/short", label: "Shortener" },
+    { href: "/", label: "Home", icon: Home },
+    { href: "/qr", label: "QR", icon: QrCode },
+    { href: "/short", label: "Shortener", icon: LinkIcon },
   ];
 
   useEffect(() => {
@@ -47,7 +47,26 @@ export default function Navbar() {
           <span className="text-sm font-semibold tracking-tight text-foreground">Arina Tools</span>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
+          <div className="flex items-center gap-0.5 sm:hidden">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-lg p-2 transition-colors ${
+                    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  aria-label={item.label}
+                >
+                  <item.icon className="h-4 w-4" />
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="hidden items-center gap-1 sm:flex">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -62,6 +81,8 @@ export default function Navbar() {
               </Link>
             );
           })}
+          </div>
+
           <motion.button
             whileHover={buttonHover}
             whileTap={buttonTap}
@@ -87,7 +108,7 @@ export default function Navbar() {
 
           {user ? (
             <>
-              <span className="max-w-[180px] truncate px-2 text-sm text-muted-foreground">
+              <span className="hidden max-w-[180px] truncate px-2 text-sm text-muted-foreground sm:block">
                 {user.email?.slice(0, 20)}
               </span>
               <motion.button
@@ -97,21 +118,33 @@ export default function Navbar() {
                 onClick={() => {
                   void signOut();
                 }}
-                className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="cursor-pointer rounded-lg px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-3 sm:text-sm"
               >
                 Sign Out
               </motion.button>
             </>
           ) : (
-            <motion.button
-              whileHover={buttonHover}
-              whileTap={buttonTap}
-              transition={buttonTransition}
-              onClick={() => setAuthOpen(true)}
-              className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Sign In
-            </motion.button>
+            <>
+              <motion.button
+                whileHover={buttonHover}
+                whileTap={buttonTap}
+                transition={buttonTransition}
+                onClick={() => setAuthOpen(true)}
+                className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground sm:hidden"
+                aria-label="Sign In"
+              >
+                <LogIn className="h-4 w-4" />
+              </motion.button>
+              <motion.button
+                whileHover={buttonHover}
+                whileTap={buttonTap}
+                transition={buttonTransition}
+                onClick={() => setAuthOpen(true)}
+                className="hidden cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
+              >
+                Sign In
+              </motion.button>
+            </>
           )}
         </div>
       </div>

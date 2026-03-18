@@ -71,7 +71,7 @@ export default function QRSingle() {
           }}
           placeholder="https://example.com"
           rows={3}
-          className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow resize-none"
+          className="w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-base text-foreground placeholder:text-muted-foreground transition-shadow focus:outline-none focus:ring-2 focus:ring-primary/50 sm:text-sm"
         />
       </div>
 
@@ -91,7 +91,7 @@ export default function QRSingle() {
             onDrop={onDrop}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input py-8 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input px-4 py-7 text-center text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground sm:py-8"
           >
             <Upload className="h-5 w-5" />
             <span className="text-sm">Drag & drop or click to upload</span>
@@ -151,14 +151,14 @@ export default function QRSingle() {
             exit="exit"
             className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-5 card-glow"
           >
-            <img src={result} alt="QR Code" className="h-64 w-64 rounded-lg" />
-            <div className="flex gap-2">
+            <img src={result} alt="QR Code" className="h-56 w-56 rounded-lg sm:h-64 sm:w-64" />
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
               <motion.button
                 whileHover={buttonHover}
                 whileTap={buttonTap}
                 transition={buttonTransition}
                 onClick={downloadImage}
-                className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground sm:w-auto"
               >
                 <Download className="h-4 w-4" /> Download PNG
               </motion.button>
@@ -167,7 +167,7 @@ export default function QRSingle() {
                 whileTap={buttonTap}
                 transition={buttonTransition}
                 onClick={copyImage}
-                className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground sm:w-auto"
               >
                 <Copy className="h-4 w-4" /> Copy
               </motion.button>
