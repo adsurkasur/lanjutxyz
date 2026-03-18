@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Download, FileText, Loader2, ChevronDown } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
+import { itemVariants, buttonHover, buttonTap, buttonTransition, DURATION, EASE } from "@/lib/motion";
 
 const sampleCSV = `id,text,logo_base64(optional)
 row-1,https://example.com,
@@ -42,15 +43,16 @@ export default function QRBulk() {
     <div className="space-y-6">
       {/* Step 1: Upload */}
       {items.length === 0 && (
-        <div className="space-y-4">
-          <div className="rounded-lg border border-border bg-secondary/30 p-4">
+        <div className="space-y-6">
+          <div className="rounded-xl border border-border bg-secondary/30 p-5">
             <p className="mb-2 text-sm font-medium text-foreground">CSV Format</p>
             <pre className="overflow-x-auto rounded bg-background p-3 text-xs text-muted-foreground">
               {sampleCSV}
             </pre>
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={buttonHover}
+              whileTap={buttonTap}
+              transition={buttonTransition}
               onClick={downloadSample}
               className="mt-3 flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground"
             >
@@ -66,7 +68,7 @@ export default function QRBulk() {
             }}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-input py-12 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input py-12 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
           >
             <Upload className="h-6 w-6" />
             <span className="text-sm">Drop CSV file here or click to browse</span>
@@ -77,7 +79,7 @@ export default function QRBulk() {
 
       {/* Step 2: Preview Table */}
       {items.length > 0 && !done && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {error && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
               {error}
@@ -94,7 +96,7 @@ export default function QRBulk() {
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-border">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-secondary/50">
@@ -135,7 +137,7 @@ export default function QRBulk() {
                   className="h-full rounded-full bg-primary"
                   initial={{ width: 0 }}
                   animate={{ width: `${percent}%` }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  transition={{ duration: DURATION.normal, ease: EASE.default }}
                 />
               </div>
               <p className="text-center text-xs text-muted-foreground">
@@ -146,8 +148,9 @@ export default function QRBulk() {
 
           {!processing && !done && (
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={buttonHover}
+              whileTap={buttonTap}
+              transition={buttonTransition}
               onClick={generateAll}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
             >
@@ -161,23 +164,24 @@ export default function QRBulk() {
       <AnimatePresence>
         {done && summary && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
+            variants={itemVariants}
+            initial="hidden"
+            animate="show"
+            className="space-y-6"
           >
             <div className="flex gap-3">
-              <div className="flex-1 rounded-lg border border-border bg-card p-4 text-center card-glow">
+              <div className="flex-1 rounded-xl border border-border bg-card p-5 text-center card-glow">
                 <p className="text-2xl font-semibold text-foreground">{summary.succeeded}</p>
                 <p className="text-xs text-muted-foreground">Succeeded</p>
               </div>
-              <div className="flex-1 rounded-lg border border-border bg-card p-4 text-center card-glow">
+              <div className="flex-1 rounded-xl border border-border bg-card p-5 text-center card-glow">
                 <p className="text-2xl font-semibold text-destructive">{summary.failed}</p>
                 <p className="text-xs text-muted-foreground">Failed</p>
               </div>
             </div>
 
             {summary.errors.length > 0 && (
-              <div className="rounded-lg border border-border bg-secondary/30 p-3">
+              <div className="rounded-xl border border-border bg-secondary/30 p-5">
                 <button
                   onClick={() => setShowErrors(!showErrors)}
                   className="flex w-full items-center justify-between text-sm font-medium text-foreground"
@@ -196,12 +200,10 @@ export default function QRBulk() {
             )}
 
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={buttonHover}
+              whileTap={buttonTap}
+              transition={buttonTransition}
               onClick={reset}
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
             >
               <Upload className="h-4 w-4" /> Generate another batch

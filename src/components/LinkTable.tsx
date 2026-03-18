@@ -4,6 +4,7 @@ import { Copy, Trash2, Link as LinkIcon, MousePointerClick, Calendar } from "luc
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import type { LinkRecord } from "@/lib/api";
+import { itemVariants } from "@/lib/motion";
 
 interface Props {
   links: LinkRecord[];
@@ -27,12 +28,12 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
           { label: "Total Links", value: links.length, icon: LinkIcon },
           { label: "Total Clicks", value: totalClicks, icon: MousePointerClick },
           { label: "This Month", value: links.filter((l) => l.createdAt >= thisMonth).length, icon: Calendar },
-        ].map((stat, i) => (
+        ].map((stat) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            variants={itemVariants}
+            initial="hidden"
+            animate="show"
             className="rounded-xl border border-border bg-card p-4 text-center card-glow"
           >
             <stat.icon className="mx-auto h-4 w-4 text-muted-foreground" />

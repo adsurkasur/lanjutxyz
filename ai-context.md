@@ -5,25 +5,25 @@
 | Property | Value |
 | --- | --- |
 | Phase | Study |
-| Task | Fix failing Vitest suites and add Cloudflare Turnstile protection |
+| Task | Move Support Me trigger to navbar and refine donation modal UX/animations/icons |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 12:01 |
+| Last Updated | 2026-03-18 12:30 |
 | Session ID | 20260318-0920 |
 
 ## User Request
 
-> Read specific files first, fix failing tests by setting env in test setup and mocking Supabase in test files, then add Cloudflare Turnstile to shortener and signup with API verification route, and validate with test/type/build.
+> Read required files first, move Support Me trigger from footer to navbar, add proper modal exit animation with AnimatePresence and forceMount, improve card hover/cursor behavior and icon quality, and validate with tsc/build.
 
 ## Execution Plan
 
 | Element | Details |
 | --- | --- |
-| Intended Phases | Study -> Propose -> Implement (single-pass execution due explicit one-shot user instruction) |
-| Evidence to Produce | Full file inventory read, migration file manifest, dependency changes, lint/type/test/build outputs |
-| Anticipated Stops | Gate if lint/type/test/build fail; escalate if dependency conflicts or incompatible runtime behavior appear |
-| Known Information | Existing project is Vite + React + TypeScript with Tailwind, hooks, UI components, and tests |
-| Unknown Information | Exact existing routing/UI logic, API utilities, test assumptions, and any hidden framework coupling |
-| Initial Risk Level | High - framework migration in place with strict preservation and deletion constraints |
+| Intended Phases | Study -> Implement -> Validate |
+| Evidence to Produce | Required file read evidence, change manifest for motion/theme/captcha edits, validation outputs (tsc/build/test) |
+| Anticipated Stops | Gate on TypeScript/build/test failures; pause if formatter/user edits conflict in same files |
+| Known Information | Turnstile integration exists, theme toggle exists, multiple framer-motion values are hardcoded across components |
+| Unknown Information | Exact class/animation inconsistencies in listed files and whether dev-mode captcha fallback currently blocks signup flow |
+| Initial Risk Level | Medium - multi-file UI motion refactor with possible behavior regressions if props/variants mismatch |
 
 ## File Context
 
@@ -164,3 +164,19 @@ User required complete migration without interactive confirmation. Will provide 
 - **11:59** - IMPLEMENT - Added Turnstile dependency, verification API route, widget/helper, and form integrations
 - **12:00** - GATE - Validation passed: bun run test and bunx tsc --noEmit
 - **12:01** - GATE - Validation passed: bun run build
+- **12:04** - STUDY - Read all requested UI files plus package/env configs prior to edits
+- **12:05** - IMPLEMENT - Added Turnstile dev fallback, signup captcha requirements logic, and dev-token bypass verification
+- **12:06** - IMPLEMENT - Added shared motion constants and refactored pages/components to use unified animation values
+- **12:07** - IMPLEMENT - Applied spacing, radius, and card/input consistency updates across QR/Shortener/Auth UI
+- **12:08** - GATE - Validation passed: bunx tsc --noEmit, bun run build, bun run test
+- **12:13** - STUDY - Read required Footer/Navbar/globals/motion files and support-me reference before implementation
+- **12:15** - IMPLEMENT - Added new DonationModal component with payment platform cards, crypto copy interactions, and nested QRIS dialog/download
+- **12:15** - IMPLEMENT - Updated Footer to client state-driven Support Me trigger and modal integration
+- **12:16** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **12:26** - STUDY - Read required donation/footer/shortener/turnstile/motion files and both donation references before edits
+- **12:27** - IMPLEMENT - Moved donation trigger into navbar and restored footer to simple static copyright
+- **12:27** - IMPLEMENT - Refactored donation modal for forceMount + AnimatePresence exit animations, hover/cursor consistency, and upgraded SVG/lucide icon set
+- **12:28** - GATE - Fixed validation blocker by excluding non-runtime references folder from tsconfig
+- **12:28** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **12:30** - IMPLEMENT - Added Radix VisuallyHidden titles for donation and nested QRIS dialogs and removed blocking pointer-events-none from main Dialog.Content
+- **12:30** - GATE - Validation passed: bunx tsc --noEmit

@@ -3,10 +3,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Loader2, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import { verifyCaptcha } from "@/lib/captcha";
+import { fadeVariants } from "@/lib/motion";
 
 type AuthModalProps = {
   open: boolean;
@@ -15,25 +16,37 @@ type AuthModalProps = {
 
 export default function AuthModal({ open, onClose }: AuthModalProps) {
   const { signInWithEmail, signUpWithEmail, error, setError } = useAuth();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
+  useEffect(() => {
+    setCaptchaToken(null);
+  }, [activeTab]);
+
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) return;
+
     setSubmitting(true);
     setError(null);
     setSuccessMessage(null);
 
-    if (mode === "signin") {
+    if (activeTab === "signin") {
       const ok = await signInWithEmail(email, password);
       if (ok) {
         onClose();
       }
     } else {
+      const needsCaptcha = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+      if (needsCaptcha && !captchaToken) {
+        setError("Please complete the security check");
+        setSubmitting(false);
+        return;
+      }
+
       if (captchaToken) {
         const valid = await verifyCaptcha(captchaToken);
         if (!valid) {
@@ -64,13 +77,15 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
         <Dialog.Content asChild>
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-5 card-glow"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-6 card-glow"
           >
             <div className="mb-4 flex items-center justify-between">
               <Dialog.Title className="text-base font-semibold text-foreground">
-                {mode === "signin" ? "Sign In" : "Sign Up"}
+                {activeTab === "signin" ? "Sign In" : "Sign Up"}
               </Dialog.Title>
               <Dialog.Close asChild>
                 <button
@@ -85,33 +100,33 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-secondary p-1">
               <button
                 onClick={() => {
-                  setMode("signin");
+                  setActiveTab("signin");
                   setError(null);
                   setSuccessMessage(null);
                   setCaptchaToken(null);
                 }}
                 className={`rounded-md px-3 py-2 text-sm transition-colors ${
-                  mode === "signin" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
+                  activeTab === "signin" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Sign In
               </button>
               <button
                 onClick={() => {
-                  setMode("signup");
+                  setActiveTab("signup");
                   setError(null);
                   setSuccessMessage(null);
                   setCaptchaToken(null);
                 }}
                 className={`rounded-md px-3 py-2 text-sm transition-colors ${
-                  mode === "signup" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
+                  activeTab === "signup" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Sign Up
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -127,7 +142,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
 
-              {mode === "signup" && (
+              {activeTab === "signup" && (
                 <TurnstileWidget
                   onVerify={setCaptchaToken}
                   onError={() => setCaptchaToken(null)}
@@ -135,17 +150,17 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               )}
 
               {error && <p className="text-sm text-destructive">{error}</p>}
-              {mode === "signup" && successMessage && (
+              {activeTab === "signup" && successMessage && (
                 <p className="text-sm text-muted-foreground">{successMessage}</p>
               )}
 
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {mode === "signin" ? "Sign In" : "Sign Up"}
+                {activeTab === "signin" ? "Sign In" : "Sign Up"}
               </button>
             </div>
           </motion.div>

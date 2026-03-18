@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import QRSingle from "@/components/QRSingle";
 import QRBulk from "@/components/QRBulk";
+import { pageVariants, EASE } from "@/lib/motion";
 
 const tabs = ["Single", "Bulk"] as const;
 
@@ -12,9 +13,9 @@ export default function QRPage() {
 
   return (
     <motion.main
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      initial={pageVariants.initial}
+      animate={pageVariants.animate}
+      transition={pageVariants.transition}
       className="flex-1 px-4 py-10 sm:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-tool">
@@ -35,7 +36,7 @@ export default function QRPage() {
                   layoutId="qr-tab-indicator"
                   className="absolute inset-0 rounded-md bg-card shadow-sm"
                   style={{ zIndex: -1 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  transition={EASE.spring}
                 />
               )}
             </button>

@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X, Download, Copy, Loader2 } from "lucide-react";
 import { useCallback, useRef } from "react";
 import { toast } from "sonner";
+import {
+  fadeVariants,
+  slideInVariants,
+  buttonHover,
+  buttonTap,
+  buttonTransition,
+} from "@/lib/motion";
 
 export default function QRSingle() {
   const { text, setText, logoPreview, handleLogoUpload, removeLogo, result, loading, error, setError, generate, setResult } = useQRSingle();
@@ -72,7 +79,7 @@ export default function QRSingle() {
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground">Logo (optional)</label>
         {logoPreview ? (
-          <div className="flex items-center gap-3 rounded-lg border border-input bg-secondary/50 p-3">
+          <div className="flex items-center gap-3 rounded-xl border border-input bg-secondary/50 p-3">
             <img src={logoPreview} alt="Logo" className="h-10 w-10 rounded object-contain" />
             <span className="flex-1 text-sm text-muted-foreground">Logo uploaded</span>
             <button onClick={removeLogo} className="rounded p-1 text-muted-foreground hover:text-foreground transition-colors">
@@ -84,7 +91,7 @@ export default function QRSingle() {
             onDrop={onDrop}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-input py-8 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-input py-8 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
           >
             <Upload className="h-5 w-5" />
             <span className="text-sm">Drag & drop or click to upload</span>
@@ -102,8 +109,9 @@ export default function QRSingle() {
 
       {/* Generate Button */}
       <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
+        whileHover={buttonHover}
+        whileTap={buttonTap}
+        transition={buttonTransition}
         onClick={generate}
         disabled={!text.trim() || loading}
         className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
@@ -115,7 +123,13 @@ export default function QRSingle() {
       <p className="text-center text-xs text-muted-foreground">Tip: press Ctrl+Enter (or Cmd+Enter) to generate</p>
 
       {error && (
-        <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
+        <motion.div
+          variants={slideInVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2"
+        >
           <p className="text-sm text-destructive">{error}</p>
           <button
             onClick={() => setError(null)}
@@ -124,32 +138,34 @@ export default function QRSingle() {
           >
             <X className="h-4 w-4" />
           </button>
-        </div>
+        </motion.div>
       )}
 
       {/* Result */}
       <AnimatePresence>
         {result && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-6 card-glow"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-5 card-glow"
           >
             <img src={result} alt="QR Code" className="h-64 w-64 rounded-lg" />
             <div className="flex gap-2">
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={buttonHover}
+                whileTap={buttonTap}
+                transition={buttonTransition}
                 onClick={downloadImage}
                 className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
               >
                 <Download className="h-4 w-4" /> Download PNG
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={buttonHover}
+                whileTap={buttonTap}
+                transition={buttonTransition}
                 onClick={copyImage}
                 className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground"
               >

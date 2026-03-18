@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import { verifyCaptcha } from "@/lib/captcha";
+import { buttonHover, buttonTap, buttonTransition, slideInVariants } from "@/lib/motion";
 
 interface Props {
   url: string;
@@ -94,8 +95,9 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
         />
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
+          whileHover={buttonHover}
+          whileTap={buttonTap}
+          transition={buttonTransition}
           onClick={() => {
             void handleShorten();
           }}
@@ -123,10 +125,10 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
       <AnimatePresence>
         {result && (
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            variants={slideInVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             className="rounded-xl border border-border bg-card p-5 card-glow"
           >
             <p className="text-xs text-muted-foreground">Your short link</p>
@@ -140,8 +142,9 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
                 {result.shortUrl}
               </a>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={buttonHover}
+                whileTap={buttonTap}
+                transition={buttonTransition}
                 onClick={copyUrl}
                 className="rounded-lg bg-primary p-2 text-primary-foreground"
               >

@@ -5,6 +5,7 @@ import ShortenerForm from "@/components/ShortenerForm";
 import LinkTable from "@/components/LinkTable";
 import { useShortener } from "@/hooks/useShortener";
 import { useAuth } from "@/hooks/useAuth";
+import { pageVariants, itemVariants } from "@/lib/motion";
 
 export default function ShortenerPage() {
   const { user } = useAuth();
@@ -26,12 +27,12 @@ export default function ShortenerPage() {
 
   return (
     <motion.main
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      initial={pageVariants.initial}
+      animate={pageVariants.animate}
+      transition={pageVariants.transition}
       className="flex-1 px-4 py-10 sm:px-6 lg:px-8"
     >
-      <div className="mx-auto max-w-tool space-y-10">
+      <div className="mx-auto max-w-tool space-y-8">
         <div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">URL Shortener</h1>
@@ -53,16 +54,16 @@ export default function ShortenerPage() {
         />
 
         {!user && (
-          <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground card-glow">
+          <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground card-glow">
             Sign in from the top-right to save links, manage your history, and track clicks over time.
           </div>
         )}
 
         {isAuthenticated && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            variants={itemVariants}
+            initial="hidden"
+            animate="show"
           >
             <LinkTable links={links} totalClicks={totalClicks} onDelete={deleteLink} />
           </motion.div>
