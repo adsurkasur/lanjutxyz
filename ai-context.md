@@ -5,9 +5,9 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Finalization pass: remove mocks and fix short URL/redirect data flow |
+| Task | Rewrite go redirect route error handling and make short URL clickable |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 11:15 |
+| Last Updated | 2026-03-18 11:23 |
 | Session ID | 20260318-0920 |
 
 ## User Request
@@ -147,3 +147,6 @@ User required complete migration without interactive confirmation. Will provide 
 - **11:20** - IMPLEMENT - Removed shortener mock data and fixed double-https and link display/copy flow
 - **11:21** - IMPLEMENT - Added validated target URL handling in /go/[slug] redirect
 - **11:22** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **11:23** - IMPLEMENT - Rewrote /go/[slug] route with fresh server client, maybeSingle, URL validation, and explicit 302 redirect
+- **11:23** - IMPLEMENT - Replaced short URL code display with clickable anchor in ShortenerForm
+- **11:23** - GATE - Validation passed: bunx tsc --noEmit and bun run build
