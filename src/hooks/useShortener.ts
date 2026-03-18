@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { shortenUrl, mockLinks, type ShortenResponse, type LinkRecord } from "@/lib/api";
+import { shortenUrl, type ShortenResponse, type LinkRecord } from "@/lib/api";
 
 export function useShortener() {
   const [url, setUrl] = useState("");
@@ -10,7 +10,7 @@ export function useShortener() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [links, setLinks] = useState<LinkRecord[]>(mockLinks);
+  const [links, setLinks] = useState<LinkRecord[]>([]);
 
   const shorten = useCallback(async () => {
     if (!url.trim()) return;
@@ -19,18 +19,16 @@ export function useShortener() {
       setError(null);
       const res = await shortenUrl({ url, slug: slug || undefined });
       setResult(res);
-      if (isAuthenticated) {
-        setLinks((prev) => [
-          { id: String(Date.now()), shortUrl: res.shortUrl, originalUrl: res.originalUrl, clicks: 0, createdAt: new Date().toISOString().split("T")[0] },
-          ...prev,
-        ]);
-      }
+      setLinks((prev) => [
+        { id: String(Date.now()), shortUrl: res.shortUrl, originalUrl: res.originalUrl, clicks: 0, createdAt: new Date().toISOString().split("T")[0] },
+        ...prev,
+      ]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
-  }, [url, slug, isAuthenticated]);
+  }, [url, slug]);
 
   const deleteLink = useCallback((id: string) => {
     setLinks((prev) => prev.filter((l) => l.id !== id));

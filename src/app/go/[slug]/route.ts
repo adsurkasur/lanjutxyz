@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 export async function GET(
   request: NextRequest,
@@ -7,23 +7,30 @@ export async function GET(
 ) {
   const { slug } = await params;
 
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  );
+
   const { data, error } = await supabase
     .from("links")
-    .select("original_url, id")
+    .select("original_url")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  supabase
-    .from("clicks")
-    .insert({
-      link_id: data.id,
-      user_agent: request.headers.get("user-agent") ?? undefined,
-    })
-    .then(() => {});
+  const target = data.original_url.startsWith("http")
+    ? data.original_url
+    : `https://${data.original_url}`;
 
-  return NextResponse.redirect(data.original_url);
+  try {
+    new URL(target);
+  } catch {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  return NextResponse.redirect(target, { status: 302 });
 }

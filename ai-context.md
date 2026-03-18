@@ -5,9 +5,9 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Add graceful shortener error handling in hook and form |
+| Task | Finalization pass: remove mocks and fix short URL/redirect data flow |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 11:09 |
+| Last Updated | 2026-03-18 11:15 |
 | Session ID | 20260318-0920 |
 
 ## User Request
@@ -143,3 +143,7 @@ User required complete migration without interactive confirmation. Will provide 
 - **11:06** - GATE - Validation passed: bunx tsc --noEmit
 - **11:08** - IMPLEMENT - Added shortener error state handling in hook and dismissible inline/toast error UI in form
 - **11:09** - GATE - Validation passed: bunx tsc --noEmit
+- **11:15** - IMPLEMENT - Started comprehensive finalization pass for short URL and redirect behavior
+- **11:20** - IMPLEMENT - Removed shortener mock data and fixed double-https and link display/copy flow
+- **11:21** - IMPLEMENT - Added validated target URL handling in /go/[slug] redirect
+- **11:22** - GATE - Validation passed: bunx tsc --noEmit and bun run build

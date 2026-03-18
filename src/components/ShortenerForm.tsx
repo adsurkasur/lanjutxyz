@@ -5,10 +5,6 @@ import { Copy, Loader2, Link as LinkIcon, X } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-const shortBaseUrl =
-  process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/";
-const shortBaseHostPath = shortBaseUrl.replace(/^https?:\/\//, "");
-
 interface Props {
   url: string;
   setUrl: (v: string) => void;
@@ -32,7 +28,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
 
   const copyUrl = () => {
     if (!result) return;
-    navigator.clipboard.writeText(`https://${result.shortUrl}`);
+    navigator.clipboard.writeText(result.shortUrl);
     toast.success("Copied to clipboard");
   };
 
@@ -53,7 +49,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow"
         />
         <div className="flex items-center gap-2">
-          <span className="shrink-0 text-xs text-muted-foreground">{shortBaseHostPath}</span>
+          <span className="shrink-0 text-xs text-muted-foreground">arinahub.com/go/</span>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value.replace(/[^a-zA-Z0-9-]/g, ""))}
@@ -97,9 +93,14 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           >
             <p className="text-xs text-muted-foreground">Your short link</p>
             <div className="mt-2 flex items-center gap-2">
-              <code className="flex-1 truncate rounded-lg bg-secondary px-3 py-2 text-sm font-medium text-foreground">
-                https://{result.shortUrl}
-              </code>
+              <a
+                href={result.shortUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 truncate rounded-lg bg-secondary px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+              >
+                {result.shortUrl}
+              </a>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -111,7 +112,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
             </div>
             <div className="mt-3 flex items-center gap-3">
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://${result.shortUrl}`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${result.shortUrl}`}
                 alt="QR"
                 className="h-16 w-16 rounded"
               />

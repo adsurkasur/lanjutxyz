@@ -5,10 +5,6 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import type { LinkRecord } from "@/lib/api";
 
-const shortBaseUrl =
-  process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/";
-const shortBaseHostPath = shortBaseUrl.replace(/^https?:\/\//, "");
-
 interface Props {
   links: LinkRecord[];
   totalClicks: number;
@@ -16,8 +12,10 @@ interface Props {
 }
 
 export default function LinkTable({ links, totalClicks, onDelete }: Props) {
+  const thisMonth = new Date().toISOString().slice(0, 7);
+
   const copyLink = (shortUrl: string) => {
-    navigator.clipboard.writeText(`https://${shortUrl}`);
+    navigator.clipboard.writeText(shortUrl);
     toast.success("Copied to clipboard");
   };
 
@@ -28,7 +26,7 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
         {[
           { label: "Total Links", value: links.length, icon: LinkIcon },
           { label: "Total Clicks", value: totalClicks, icon: MousePointerClick },
-          { label: "This Month", value: links.filter((l) => l.createdAt >= "2025-01").length, icon: Calendar },
+          { label: "This Month", value: links.filter((l) => l.createdAt >= thisMonth).length, icon: Calendar },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -67,7 +65,7 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
               <tbody>
                 {links.map((link) => (
                   <tr key={link.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-2.5 font-mono text-xs text-primary">{link.shortUrl.replace(shortBaseHostPath, "/go/")}</td>
+                    <td className="px-4 py-2.5 font-mono text-xs text-primary">{link.shortUrl}</td>
                     <td className="max-w-[180px] truncate px-4 py-2.5 text-muted-foreground">{link.originalUrl}</td>
                     <td className="px-4 py-2.5 text-right font-medium">{link.clicks}</td>
                     <td className="px-4 py-2.5 text-muted-foreground">{link.createdAt}</td>
