@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Arina Toolkit
 
-TODO: Document your project here
+React toolset migrated to Next.js App Router.

@@ -1,3 +1,5 @@
+"use client";
+
 import { useQRBulk } from "@/hooks/useQR";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Download, FileText, Loader2, ChevronDown } from "lucide-react";

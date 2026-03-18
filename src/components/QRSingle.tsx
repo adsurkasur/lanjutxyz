@@ -1,3 +1,5 @@
+"use client";
+
 import { useQRSingle } from "@/hooks/useQR";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X, Download, Copy, Loader2 } from "lucide-react";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback } from "react";
 import { shortenUrl, mockLinks, type ShortenResponse, type LinkRecord } from "@/lib/api";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback } from "react";
 import { generateQRSingle, generateQRBulk, type QRBulkItem } from "@/lib/api";
 
@@ -50,10 +52,11 @@ export function useQRBulk() {
     const parsed: QRBulkItem[] = [];
     for (let i = 1; i < lines.length; i++) {
       const parts = lines[i].split(",");
-      if (parts.length >= 2) {
+      const text = parts[1]?.trim() || "";
+      if (parts.length >= 2 && text) {
         parsed.push({
           id: parts[0]?.trim() || `row-${i}`,
-          text: parts[1]?.trim() || "",
+          text,
           logo_base64: parts[2]?.trim() || undefined,
         });
       }

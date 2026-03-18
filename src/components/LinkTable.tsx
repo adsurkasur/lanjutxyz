@@ -1,7 +1,13 @@
+"use client";
+
 import { Copy, Trash2, Link as LinkIcon, MousePointerClick, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import type { LinkRecord } from "@/lib/api";
+
+const shortBaseUrl =
+  process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/";
+const shortBaseHostPath = shortBaseUrl.replace(/^https?:\/\//, "");
 
 interface Props {
   links: LinkRecord[];
@@ -61,7 +67,7 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
               <tbody>
                 {links.map((link) => (
                   <tr key={link.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-2.5 font-mono text-xs text-primary">{link.shortUrl.replace("tools.arinahub.com/go/", "/go/")}</td>
+                    <td className="px-4 py-2.5 font-mono text-xs text-primary">{link.shortUrl.replace(shortBaseHostPath, "/go/")}</td>
                     <td className="max-w-[180px] truncate px-4 py-2.5 text-muted-foreground">{link.originalUrl}</td>
                     <td className="px-4 py-2.5 text-right font-medium">{link.clicks}</td>
                     <td className="px-4 py-2.5 text-muted-foreground">{link.createdAt}</td>

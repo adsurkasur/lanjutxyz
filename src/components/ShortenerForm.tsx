@@ -1,6 +1,12 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Loader2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
+
+const shortBaseUrl =
+  process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/";
+const shortBaseHostPath = shortBaseUrl.replace(/^https?:\/\//, "");
 
 interface Props {
   url: string;
@@ -38,7 +44,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow"
         />
         <div className="flex items-center gap-2">
-          <span className="shrink-0 text-xs text-muted-foreground">tools.arinahub.com/go/</span>
+          <span className="shrink-0 text-xs text-muted-foreground">{shortBaseHostPath}</span>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value.replace(/[^a-zA-Z0-9-]/g, ""))}

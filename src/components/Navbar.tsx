@@ -1,11 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
   const [dark, setDark] = useState(true);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -24,7 +27,7 @@ export default function Navbar() {
       className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md"
     >
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
             <span className="text-xs font-bold text-primary-foreground">A</span>
           </div>
@@ -32,9 +35,9 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-1">
-          {location.pathname !== "/" && (
+          {pathname !== "/" && (
             <Link
-              to="/"
+              href="/"
               className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               Home
