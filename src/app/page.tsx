@@ -6,7 +6,6 @@ import { QrCode, Link as LinkIcon, ArrowRight } from "lucide-react";
 import {
   containerVariants,
   itemVariants,
-  pageVariants,
   buttonHover,
   buttonTap,
   buttonTransition,
@@ -34,20 +33,20 @@ const tools = [
 export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col justify-center px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-      <div className="mx-auto flex max-w-tool flex-col items-center justify-center space-y-8 text-center">
-        <motion.div
-          initial={pageVariants.initial}
-          animate={pageVariants.animate}
-          transition={pageVariants.transition}
-          className="space-y-3"
-        >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="mx-auto flex max-w-tool flex-col items-center justify-center space-y-8 text-center"
+      >
+        <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Simple tools, serious results.
           </h1>
           <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
             QR codes and short links - built for people who care about details.
           </p>
-        </motion.div>
+        </div>
 
         <motion.div
           variants={containerVariants}
@@ -56,7 +55,7 @@ export default function HomePage() {
           className="grid w-full max-w-2xl gap-4 sm:grid-cols-2"
         >
           {tools.map((tool) => (
-            <motion.div key={tool.href} variants={itemVariants}>
+            <motion.div key={tool.href} variants={itemVariants} layout="position">
               <Link href={tool.href}>
                 <motion.div
                   whileHover={buttonHover}
@@ -80,7 +79,7 @@ export default function HomePage() {
             </motion.div>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
     </main>
   );
 }

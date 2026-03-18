@@ -2,7 +2,7 @@
 
 export const DURATION = {
   fast: 0.15,
-  normal: 0.25,
+  normal: 0.2,
   slow: 0.4,
 } as const;
 
@@ -13,13 +13,13 @@ export const EASE = {
 } as const;
 
 export const pageVariants = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: DURATION.normal, ease: EASE.default },
 };
 
 export const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
     y: 0,
@@ -29,7 +29,7 @@ export const itemVariants = {
 
 export const containerVariants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.06 } },
 };
 
 export const buttonHover = { scale: 1.02 };

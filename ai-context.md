@@ -5,14 +5,14 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Center homepage tool cards icon + CTA within their containers |
+| Task | Convert QRIS modal to custom portal, optimize page/motion animation timings, and add global/modal scrollbar styling |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 13:24 |
+| Last Updated | 2026-03-18 13:35 |
 | Session ID | 20260318-0920 |
 
 ## User Request
 
-> Read listed UI files first, fix donation modal click-outside close with smooth exit and styled QRIS sub-modal, then apply mobile responsiveness polish across app pages/components and validate with tsc/build.
+> Read DonationModal/globals/page/motion files first, replace QRIS modal with custom portal (no Radix there), tune motion timings to reduce page-load lag, add modern scrollbar styling globally and on donation body, then run tsc/build.
 
 ## Execution Plan
 
@@ -127,6 +127,14 @@ No stop conditions triggered yet.
 | src/components/ShortenerForm.tsx | Modified | Mobile-friendly input sizing and result block stacking | Yes |
 | src/components/LinkTable.tsx | Modified | Mobile card list fallback plus desktop table retention | Yes |
 | src/components/AuthModal.tsx | Modified | Smaller-screen modal spacing and control sizing updates | Yes |
+| src/components/DonationModal.tsx | Modified | Surgical performance/close-flow fixes and QRIS sub-modal rewrite per latest request | Yes |
+| src/components/DonationModal.tsx | Modified | Full architectural rewrite to createPortal-based main modal with Radix retained only for QRIS sub-modal | Yes |
+| src/components/DonationModal.tsx | Modified | Replaced QRIS sub-modal with custom portal implementation and removed Radix/VisuallyHidden usage in file | Yes |
+| src/lib/motion.ts | Modified | Reduced stagger/duration and travel distance for lighter initial animation load | Yes |
+| src/app/page.tsx | Modified | Simplified page entry animation and added layout positioning on card wrappers | Yes |
+| src/app/qr/page.tsx | Modified | Replaced page-level translate animation with opacity-only mount transition | Yes |
+| src/app/short/page.tsx | Modified | Replaced page-level translate animation with opacity-only mount transition | Yes |
+| src/app/globals.css | Modified | Added modern global scrollbar styles for WebKit and Firefox | Yes |
 
 ## Notes
 
@@ -204,3 +212,13 @@ User required complete migration without interactive confirmation. Will provide 
 - **13:04** - GATE - Validation passed: bunx tsc --noEmit and bun run build
 - **13:05** - GATE - Re-validation passed after QRIS forceMount close animation tuning: bunx tsc --noEmit and bun run build
 - **13:24** - IMPLEMENT - Centered tool card icon and CTA by adding mx-auto to their wrappers
+- **13:12** - STUDY - Began targeted DonationModal-only surgical fix pass per latest request
+- **13:13** - IMPLEMENT - Applied DonationModal-only surgical patch for lag reduction, outside-click close fix, and QRIS sub-modal rewrite
+- **13:14** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **13:18** - IMPLEMENT - Replaced DonationModal architecture with custom React portal + Framer Motion for main modal and Radix-only QRIS sub-modal
+- **13:20** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **13:30** - STUDY - Began follow-up pass for QRIS custom portal conversion + motion tuning + scrollbar styling
+- **13:32** - IMPLEMENT - Replaced QRIS sub-modal with custom createPortal + AnimatePresence (no Radix/VisuallyHidden in DonationModal)
+- **13:34** - IMPLEMENT - Tuned global motion constants and simplified page-level mount animations in Home/QR/Short pages
+- **13:35** - IMPLEMENT - Added global and donation-body-specific scrollbar styling
+- **13:35** - GATE - Validation passed: bunx tsc --noEmit and bun run build

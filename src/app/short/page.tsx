@@ -5,7 +5,7 @@ import ShortenerForm from "@/components/ShortenerForm";
 import LinkTable from "@/components/LinkTable";
 import { useShortener } from "@/hooks/useShortener";
 import { useAuth } from "@/hooks/useAuth";
-import { pageVariants, itemVariants } from "@/lib/motion";
+import { itemVariants } from "@/lib/motion";
 
 export default function ShortenerPage() {
   const { user } = useAuth();
@@ -27,9 +27,9 @@ export default function ShortenerPage() {
 
   return (
     <motion.main
-      initial={pageVariants.initial}
-      animate={pageVariants.animate}
-      transition={pageVariants.transition}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
       className="flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8"
     >
       <div className="mx-auto max-w-tool space-y-8">

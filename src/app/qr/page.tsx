@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import QRSingle from "@/components/QRSingle";
 import QRBulk from "@/components/QRBulk";
-import { pageVariants, EASE } from "@/lib/motion";
+import { EASE } from "@/lib/motion";
 
 const tabs = ["Single", "Bulk"] as const;
 
@@ -13,9 +13,9 @@ export default function QRPage() {
 
   return (
     <motion.main
-      initial={pageVariants.initial}
-      animate={pageVariants.animate}
-      transition={pageVariants.transition}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
       className="flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8"
     >
       <div className="mx-auto max-w-tool">
