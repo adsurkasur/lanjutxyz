@@ -4,6 +4,8 @@
 // TODO: Replace each with actual fetch calls.
 // ============================================
 
+import { supabase } from "@/lib/supabase";
+
 export interface QRSingleRequest {
   text: string;
   logo_base64?: string;
@@ -54,16 +56,28 @@ const shortBaseHostPath = shortBaseUrl
 // Header: X-API-Key from env NEXT_PUBLIC_QR_API_KEY
 // Body: { text: string, logo_base64?: string }
 export async function generateQRSingle(req: QRSingleRequest): Promise<QRSingleResponse> {
-  if (!req.text.trim()) {
-    return { success: false, image_base64: "", error: "Text is required" };
+  let response: Response;
+
+  try {
+    response = await fetch(`${qrApiBaseUrl}/api/qr/single`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": qrApiKey,
+      },
+      body: JSON.stringify({ text: req.text, logo_base64: req.logo_base64 }),
+    });
+  } catch {
+    throw new Error("Network error: could not reach QR API");
   }
 
-  void qrApiKey;
-  void qrApiBaseUrl;
+  const payload = (await response.json()) as QRSingleResponse;
 
-  // Mock: use public QR API as stand-in
-  const url = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(req.text)}`;
-  return { success: true, image_base64: url };
+  if (payload.success === true) {
+    return { success: true, image_base64: payload.image_base64 };
+  }
+
+  throw new Error(payload.error);
 }
 
 // --- QR Bulk ---
@@ -75,26 +89,29 @@ export async function generateQRBulk(
   items: QRBulkItem[],
   onProgress: (completed: number, total: number) => void
 ): Promise<{ succeeded: number; failed: number; errors: string[] }> {
-  const total = items.filter((i) => i.text.trim()).length;
-  let succeeded = 0;
-  let failed = 0;
-  let completed = 0;
-  const errors: string[] = [];
+  const response = await fetch(`${qrApiBaseUrl}/api/qr/bulk`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": qrApiKey,
+    },
+    body: JSON.stringify({ items }),
+  });
 
-  for (let i = 0; i < items.length; i++) {
-    if (!items[i].text.trim()) {
-      failed++;
-      errors.push(`Row ${items[i].id}: empty text`);
-      continue;
-    }
-    // Simulate processing delay
-    await new Promise((r) => setTimeout(r, 400));
-    succeeded++;
-    completed++;
-    onProgress(completed, total);
+  if (!response.ok) {
+    throw new Error("Bulk QR generation failed");
   }
 
-  return { succeeded, failed, errors };
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `qr_bulk_${Date.now()}.zip`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  onProgress(items.length, items.length);
+  return { succeeded: items.length, failed: 0, errors: [] };
 }
 
 // --- URL Shortener ---
@@ -106,10 +123,25 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
     throw new Error("URL is required");
   }
 
-  await new Promise((r) => setTimeout(r, 600));
-  const slug = req.slug || generateSlug();
+  const slug = req.slug || Math.random().toString(36).slice(2, 8);
+  const { data, error } = await supabase
+    .from("links")
+    .insert({
+      slug,
+      original_url: req.url,
+      user_id: (await supabase.auth.getUser()).data.user?.id ?? null,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  void data;
+
   return {
-    shortUrl: `${shortBaseHostPath}${slug}`,
+    shortUrl: `${process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/"}${slug}`,
     slug,
     originalUrl: req.url,
   };

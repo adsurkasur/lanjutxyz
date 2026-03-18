@@ -5,9 +5,9 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Tailwind CSS v4 compatibility refactor for globals and config files |
+| Task | Rename Supabase env key to NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 09:49 |
+| Last Updated | 2026-03-18 10:40 |
 | Session ID | 20260318-0920 |
 
 ## User Request
@@ -125,3 +125,13 @@ User required complete migration without interactive confirmation. Will provide 
 - **09:42** - IMPLEMENT - Applied Tailwind v4 compatibility changes to globals.css, tailwind config plugin usage, and postcss format
 - **09:47** - GATE - Runtime validated on localhost:3000 with homepage HTTP 200
 - **09:49** - GATE - Lint, TypeScript check, and build completed successfully (lint warnings only)
+- **10:12** - IMPLEMENT - Started targeted API integration for QR single and bulk endpoints
+- **10:15** - IMPLEMENT - Replaced generateQRSingle and generateQRBulk mock internals with real Flask API calls
+- **10:16** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **10:38** - IMPLEMENT - Started Supabase shortener integration task
+- **10:42** - IMPLEMENT - Added Supabase client module, env keys, shortenUrl DB insert, and /go/[slug] redirect route
+- **10:44** - GATE - Build initially failed with empty anon key in .env.local; validated with temporary session env key while keeping file value empty
+- **10:45** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **10:40** - IMPLEMENT - Started env key rename from NEXT_PUBLIC_SUPABASE_ANON_KEY to NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+- **10:41** - IMPLEMENT - Completed env key rename in .env.local, .env.example, and supabase client
+- **10:41** - GATE - Validation passed: bunx tsc --noEmit
