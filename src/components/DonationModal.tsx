@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Coffee, Copy, ExternalLink, Heart, QrCode, X } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 type DonationModalProps = {
@@ -106,7 +106,7 @@ export function DonationTrigger({ onClick }: DonationTriggerProps) {
   return (
     <button
       onClick={onClick}
-      className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-rose-400"
+      className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-rose-400"
       aria-label="Support Me"
       type="button"
     >
@@ -116,8 +116,17 @@ export function DonationTrigger({ onClick }: DonationTriggerProps) {
 }
 
 export default function DonationModal({ open, onClose }: DonationModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [qrisOpen, setQrisOpen] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open) setMounted(true);
+    if (!open) {
+      const timer = window.setTimeout(() => setMounted(false), 220);
+      return () => window.clearTimeout(timer);
+    }
+  }, [open]);
 
   const cryptoItems = useMemo<CryptoItem[]>(
     () => [
@@ -177,6 +186,8 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
     }
   };
 
+  if (!mounted) return null;
+
   return (
     <Dialog.Root
       open={open}
@@ -184,10 +195,10 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
         if (!next) onClose();
       }}
     >
-      <Dialog.Portal forceMount>
+      <Dialog.Portal>
         <AnimatePresence>
           {open && (
-            <Dialog.Overlay forceMount asChild>
+            <Dialog.Overlay asChild>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -199,7 +210,11 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
           )}
         </AnimatePresence>
 
-        <Dialog.Content forceMount className="fixed inset-0 z-[60] grid place-items-center p-4">
+        <Dialog.Content className="fixed inset-0 z-[60] grid place-items-center p-4">
+          <VisuallyHidden.Root>
+            <Dialog.Title>Support Me</Dialog.Title>
+          </VisuallyHidden.Root>
+
           <AnimatePresence>
             {open && (
               <motion.div
@@ -208,17 +223,13 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 8 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="pointer-events-auto w-[92vw] max-w-xl rounded-xl border border-border bg-card p-5 card-glow"
+                className="pointer-events-auto relative w-full max-w-md rounded-2xl border border-border bg-card shadow-2xl"
               >
-                <VisuallyHidden.Root>
-                  <Dialog.Title>Support Me</Dialog.Title>
-                </VisuallyHidden.Root>
-
-                <div className="mb-4 flex items-center justify-between">
-                  <Dialog.Title className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <div className="mb-4 flex items-center justify-between p-5 pb-0">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <Heart className="h-4 w-4 text-rose-400" fill="currentColor" />
                     Support Me
-                  </Dialog.Title>
+                  </div>
                   <Dialog.Close asChild>
                     <button
                       className="rounded-lg p-1 text-muted-foreground transition-colors hover:text-foreground"
@@ -229,7 +240,7 @@ export default function DonationModal({ open, onClose }: DonationModalProps) {
                   </Dialog.Close>
                 </div>
 
-                <div className="max-h-[70vh] space-y-6 overflow-y-auto overflow-x-hidden pr-1">
+                <div className="max-h-[70vh] space-y-6 overflow-y-auto overflow-x-hidden p-5 pt-0 pr-4">
                   <section>
                     <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Payment Platforms

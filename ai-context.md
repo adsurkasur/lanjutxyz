@@ -5,14 +5,14 @@
 | Property | Value |
 | --- | --- |
 | Phase | Study |
-| Task | Move Support Me trigger to navbar and refine donation modal UX/animations/icons |
+| Task | Fix donation modal mounting/pointer lock, center homepage cards, and add navbar pointer cursors |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 12:30 |
+| Last Updated | 2026-03-18 12:51 |
 | Session ID | 20260318-0920 |
 
 ## User Request
 
-> Read required files first, move Support Me trigger from footer to navbar, add proper modal exit animation with AnimatePresence and forceMount, improve card hover/cursor behavior and icon quality, and validate with tsc/build.
+> Read DonationModal and homepage first, replace forceMount modal structure to avoid body pointer lock, center homepage tool cards vertically, add cursor-pointer to navbar icon/action buttons, and run tsc validation.
 
 ## Execution Plan
 
@@ -180,3 +180,11 @@ User required complete migration without interactive confirmation. Will provide 
 - **12:28** - GATE - Validation passed: bunx tsc --noEmit and bun run build
 - **12:30** - IMPLEMENT - Added Radix VisuallyHidden titles for donation and nested QRIS dialogs and removed blocking pointer-events-none from main Dialog.Content
 - **12:30** - GATE - Validation passed: bunx tsc --noEmit
+- **12:42** - STUDY - Re-read DonationModal and prepared targeted fix for direct DialogTitle placement under forceMounted Dialog.Content
+- **12:44** - IMPLEMENT - Moved hidden Support Me DialogTitle to direct child of main Dialog.Content and removed duplicate hidden title from animated panel
+- **12:44** - IMPLEMENT - Added new Supabase auth confirmation callback route at /auth/confirm
+- **12:45** - GATE - Validation passed: bunx tsc --noEmit
+- **12:49** - STUDY - Read DonationModal and homepage files plus navbar for button cursor updates
+- **12:50** - IMPLEMENT - Reworked donation modal mounting to remove forceMount path and prevent persistent body pointer lock
+- **12:50** - IMPLEMENT - Centered homepage tool card content vertically and added cursor-pointer to navbar theme/support/auth actions
+- **12:51** - GATE - Validation passed: bunx tsc --noEmit

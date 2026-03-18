@@ -62,7 +62,7 @@ export default function HomePage() {
                   whileHover={buttonHover}
                   whileTap={buttonTap}
                   transition={buttonTransition}
-                  className="group relative rounded-xl border border-border bg-card p-5 card-glow transition-colors"
+                  className="group relative flex min-h-[160px] flex-col justify-center rounded-xl border border-border bg-card p-5 card-glow transition-colors"
                 >
                   <div
                     className={`mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${tool.gradient}`}

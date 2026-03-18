@@ -67,7 +67,7 @@ export default function Navbar() {
             whileTap={buttonTap}
             transition={buttonTransition}
             onClick={() => setDark(!dark)}
-            className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Toggle theme"
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -97,7 +97,7 @@ export default function Navbar() {
                 onClick={() => {
                   void signOut();
                 }}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 Sign Out
               </motion.button>
@@ -108,7 +108,7 @@ export default function Navbar() {
               whileTap={buttonTap}
               transition={buttonTransition}
               onClick={() => setAuthOpen(true)}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               Sign In
             </motion.button>
