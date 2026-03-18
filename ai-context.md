@@ -5,14 +5,14 @@
 | Property | Value |
 | --- | --- |
 | Phase | Implement |
-| Task | Convert QRIS modal to custom portal, optimize page/motion animation timings, and add global/modal scrollbar styling |
+| Task | Remove shortener turnstile, unify modal system (support/qris/auth), and remove pointer cursor outside modals |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 13:35 |
+| Last Updated | 2026-03-18 15:07 |
 | Session ID | 20260318-0920 |
 
 ## User Request
 
-> Read DonationModal/globals/page/motion files first, replace QRIS modal with custom portal (no Radix there), tune motion timings to reduce page-load lag, add modern scrollbar styling globally and on donation body, then run tsc/build.
+> 1) Remove cf-turnstile from shortener page so captcha only appears in sign in/sign up modal, 2) unify and standardize modal system using Support Me modal as source of truth for Support Me/QRIS/Auth modals, 3) ensure outside modal area does not show pointer cursor.
 
 ## Execution Plan
 
@@ -135,6 +135,9 @@ No stop conditions triggered yet.
 | src/app/qr/page.tsx | Modified | Replaced page-level translate animation with opacity-only mount transition | Yes |
 | src/app/short/page.tsx | Modified | Replaced page-level translate animation with opacity-only mount transition | Yes |
 | src/app/globals.css | Modified | Added modern global scrollbar styles for WebKit and Firefox | Yes |
+| src/components/ShortenerForm.tsx | Modified | Removed Turnstile/captcha flow from shortener page submission | Yes |
+| src/components/AuthModal.tsx | Modified | Rebuilt auth modal with same custom portal modal architecture as support/qris modals | Yes |
+| src/components/DonationModal.tsx | Modified | Removed cursor-pointer from outside backdrops for support and qris overlays | Yes |
 
 ## Notes
 
@@ -222,3 +225,7 @@ User required complete migration without interactive confirmation. Will provide 
 - **13:34** - IMPLEMENT - Tuned global motion constants and simplified page-level mount animations in Home/QR/Short pages
 - **13:35** - IMPLEMENT - Added global and donation-body-specific scrollbar styling
 - **13:35** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **15:04** - STUDY - Started pass to remove shortener captcha, standardize all modal systems, and fix outside-cursor behavior
+- **15:06** - IMPLEMENT - Removed shortener Turnstile/captcha verification and standardized AuthModal to portal-based system matching SupportMe modal
+- **15:07** - IMPLEMENT - Removed cursor-pointer from outside overlay regions (SupportMe and QRIS backdrops)
+- **15:07** - GATE - Validation passed: bunx tsc --noEmit and bun run build

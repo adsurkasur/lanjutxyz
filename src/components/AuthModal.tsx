@@ -1,13 +1,12 @@
 "use client";
 
-import * as Dialog from "@radix-ui/react-dialog";
+import { createPortal } from "react-dom";
 import { Loader2, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import { verifyCaptcha } from "@/lib/captcha";
-import { fadeVariants } from "@/lib/motion";
 
 type AuthModalProps = {
   open: boolean;
@@ -22,6 +21,11 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPortalEl(document.body);
+  }, []);
 
   useEffect(() => {
     setCaptchaToken(null);
@@ -66,106 +70,117 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setSubmitting(false);
   };
 
-  return (
-    <Dialog.Root
-      open={open}
-      onOpenChange={(nextOpen) => {
-        if (!nextOpen) onClose();
-      }}
-    >
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
-        <Dialog.Content asChild>
+  if (!portalEl) return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <>
           <motion.div
-            variants={fadeVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-4 sm:w-[92vw] sm:p-6 card-glow"
+            key="auth-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          />
+
+          <motion.div
+            key="auth-panel"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[60] grid place-items-center p-4 pointer-events-none"
           >
-            <div className="mb-4 flex items-center justify-between">
-              <Dialog.Title className="text-base font-semibold text-foreground">
-                {activeTab === "signin" ? "Sign In" : "Sign Up"}
-              </Dialog.Title>
-              <Dialog.Close asChild>
+            <div className="pointer-events-auto w-[94vw] max-w-md rounded-2xl border border-border bg-card p-4 shadow-2xl sm:w-[92vw] sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-base font-semibold text-foreground">
+                  {activeTab === "signin" ? "Sign In" : "Sign Up"}
+                </h2>
                 <button
                   className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
                   aria-label="Close auth modal"
+                  onClick={onClose}
+                  type="button"
                 >
                   <X className="h-4 w-4" />
                 </button>
-              </Dialog.Close>
-            </div>
+              </div>
 
-            <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-secondary p-1">
-              <button
-                onClick={() => {
-                  setActiveTab("signin");
-                  setError(null);
-                  setSuccessMessage(null);
-                  setCaptchaToken(null);
-                }}
-                className={`rounded-md px-3 py-2.5 text-sm transition-colors sm:py-2 ${
-                  activeTab === "signin" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab("signup");
-                  setError(null);
-                  setSuccessMessage(null);
-                  setCaptchaToken(null);
-                }}
-                className={`rounded-md px-3 py-2.5 text-sm transition-colors sm:py-2 ${
-                  activeTab === "signup" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Sign Up
-              </button>
-            </div>
+              <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-secondary p-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("signin");
+                    setError(null);
+                    setSuccessMessage(null);
+                    setCaptchaToken(null);
+                  }}
+                  className={`rounded-md px-3 py-2.5 text-sm transition-colors sm:py-2 ${
+                    activeTab === "signin" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("signup");
+                    setError(null);
+                    setSuccessMessage(null);
+                    setCaptchaToken(null);
+                  }}
+                  className={`rounded-md px-3 py-2.5 text-sm transition-colors sm:py-2 ${
+                    activeTab === "signup" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Sign Up
+                </button>
+              </div>
 
-            <div className="space-y-4">
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                type="email"
-                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
-              />
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                type="password"
-                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
-              />
-
-              {activeTab === "signup" && (
-                <TurnstileWidget
-                  onVerify={setCaptchaToken}
-                  onError={() => setCaptchaToken(null)}
+              <div className="space-y-4">
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  type="email"
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
                 />
-              )}
+                <input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  type="password"
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
+                />
 
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              {activeTab === "signup" && successMessage && (
-                <p className="text-sm text-muted-foreground">{successMessage}</p>
-              )}
+                {activeTab === "signup" && (
+                  <TurnstileWidget
+                    onVerify={setCaptchaToken}
+                    onError={() => setCaptchaToken(null)}
+                  />
+                )}
 
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
-              >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {activeTab === "signin" ? "Sign In" : "Sign Up"}
-              </button>
+                {error && <p className="text-sm text-destructive">{error}</p>}
+                {activeTab === "signup" && successMessage && (
+                  <p className="text-sm text-muted-foreground">{successMessage}</p>
+                )}
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                >
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  {activeTab === "signin" ? "Sign In" : "Sign Up"}
+                </button>
+              </div>
             </div>
           </motion.div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        </>
+      )}
+    </AnimatePresence>,
+    portalEl
   );
 }

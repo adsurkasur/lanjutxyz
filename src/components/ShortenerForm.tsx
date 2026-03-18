@@ -2,10 +2,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Loader2, Link as LinkIcon, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import TurnstileWidget from "@/components/TurnstileWidget";
-import { verifyCaptcha } from "@/lib/captcha";
 import { buttonHover, buttonTap, buttonTransition, slideInVariants } from "@/lib/motion";
 
 interface Props {
@@ -22,32 +20,13 @@ interface Props {
 }
 
 export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, shorten, result, error, setError, isAuthenticated }: Props) {
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
-
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
   }, [error]);
 
-  useEffect(() => {
-    if (result) {
-      setCaptchaToken(null);
-      setCaptchaVerified(false);
-    }
-  }, [result]);
-
   const handleShorten = async () => {
-    if (captchaToken) {
-      const valid = await verifyCaptcha(captchaToken);
-      if (!valid) {
-        setError("Captcha verification failed. Please try again.");
-        setCaptchaVerified(false);
-        return;
-      }
-    }
-
     await shorten();
   };
 
@@ -83,17 +62,6 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           />
         </div>
 
-        <TurnstileWidget
-          onVerify={(token) => {
-            setCaptchaToken(token);
-            setCaptchaVerified(true);
-          }}
-          onError={() => {
-            setCaptchaToken(null);
-            setCaptchaVerified(false);
-          }}
-        />
-
         <motion.button
           whileHover={buttonHover}
           whileTap={buttonTap}
@@ -101,7 +69,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           onClick={() => {
             void handleShorten();
           }}
-          disabled={!url.trim() || loading || (!!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaVerified)}
+          disabled={!url.trim() || loading}
           className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}

@@ -171,7 +171,7 @@ function QrisModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[70] cursor-pointer bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm"
           />
 
           <motion.div
@@ -259,7 +259,7 @@ export default function DonationModal({ open, onClose }: Props) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 cursor-pointer bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
           />
 
           <motion.div
