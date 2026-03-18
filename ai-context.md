@@ -7,7 +7,7 @@
 | Phase | Implement |
 | Task | Remove shortener turnstile, unify modal system (support/qris/auth), and remove pointer cursor outside modals |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 15:07 |
+| Last Updated | 2026-03-18 15:10 |
 | Session ID | 20260318-0920 |
 
 ## User Request
@@ -138,6 +138,7 @@ No stop conditions triggered yet.
 | src/components/ShortenerForm.tsx | Modified | Removed Turnstile/captcha flow from shortener page submission | Yes |
 | src/components/AuthModal.tsx | Modified | Rebuilt auth modal with same custom portal modal architecture as support/qris modals | Yes |
 | src/components/DonationModal.tsx | Modified | Removed cursor-pointer from outside backdrops for support and qris overlays | Yes |
+| src/components/AuthModal.tsx | Modified | Enabled Turnstile requirement for both sign in and sign up, centered widget in modal form | Yes |
 
 ## Notes
 
@@ -229,3 +230,5 @@ User required complete migration without interactive confirmation. Will provide 
 - **15:06** - IMPLEMENT - Removed shortener Turnstile/captcha verification and standardized AuthModal to portal-based system matching SupportMe modal
 - **15:07** - IMPLEMENT - Removed cursor-pointer from outside overlay regions (SupportMe and QRIS backdrops)
 - **15:07** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **15:09** - IMPLEMENT - Updated auth flow to require Turnstile for sign in and sign up and centered Turnstile rendering in modal
+- **15:10** - GATE - Validation passed: bunx tsc --noEmit and bun run build

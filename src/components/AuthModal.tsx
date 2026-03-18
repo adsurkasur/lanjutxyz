@@ -38,28 +38,28 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setError(null);
     setSuccessMessage(null);
 
+    const needsCaptcha = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (needsCaptcha && !captchaToken) {
+      setError("Please complete the security check");
+      setSubmitting(false);
+      return;
+    }
+
+    if (captchaToken) {
+      const valid = await verifyCaptcha(captchaToken);
+      if (!valid) {
+        setError("Captcha verification failed.");
+        setSubmitting(false);
+        return;
+      }
+    }
+
     if (activeTab === "signin") {
       const ok = await signInWithEmail(email, password);
       if (ok) {
         onClose();
       }
     } else {
-      const needsCaptcha = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-      if (needsCaptcha && !captchaToken) {
-        setError("Please complete the security check");
-        setSubmitting(false);
-        return;
-      }
-
-      if (captchaToken) {
-        const valid = await verifyCaptcha(captchaToken);
-        if (!valid) {
-          setError("Captcha verification failed.");
-          setSubmitting(false);
-          return;
-        }
-      }
-
       const ok = await signUpWithEmail(email, password);
       if (ok) {
         setSuccessMessage("Check your email to confirm your account");
@@ -155,12 +155,12 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 sm:py-2 sm:text-sm"
                 />
 
-                {activeTab === "signup" && (
+                <div className="flex justify-center">
                   <TurnstileWidget
                     onVerify={setCaptchaToken}
                     onError={() => setCaptchaToken(null)}
                   />
-                )}
+                </div>
 
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 {activeTab === "signup" && successMessage && (
