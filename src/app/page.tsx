@@ -33,7 +33,7 @@ const tools = [
 
 export default function HomePage() {
   return (
-    <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-tool flex-col items-center justify-center space-y-8 text-center">
         <motion.div
           initial={pageVariants.initial}
