@@ -65,7 +65,16 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
               <tbody>
                 {links.map((link) => (
                   <tr key={link.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-2.5 font-mono text-xs text-primary">{link.shortUrl}</td>
+                    <td className="px-4 py-2.5">
+                      <a
+                        href={link.shortUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-primary transition-colors hover:text-primary/80 hover:underline"
+                      >
+                        {link.shortUrl}
+                      </a>
+                    </td>
                     <td className="max-w-[180px] truncate px-4 py-2.5 text-muted-foreground">{link.originalUrl}</td>
                     <td className="px-4 py-2.5 text-right font-medium">{link.clicks}</td>
                     <td className="px-4 py-2.5 text-muted-foreground">{link.createdAt}</td>

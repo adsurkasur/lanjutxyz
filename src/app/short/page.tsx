@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import ShortenerForm from "@/components/ShortenerForm";
 import LinkTable from "@/components/LinkTable";
 import { useShortener } from "@/hooks/useShortener";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ShortenerPage() {
+  const { user } = useAuth();
   const {
     url,
     setUrl,
@@ -17,7 +19,6 @@ export default function ShortenerPage() {
     loading,
     shorten,
     isAuthenticated,
-    toggleAuth,
     links,
     deleteLink,
     totalClicks,
@@ -32,19 +33,9 @@ export default function ShortenerPage() {
     >
       <div className="mx-auto max-w-tool space-y-10">
         <div>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">URL Shortener</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Create branded short links.</p>
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={toggleAuth}
-              className="rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition-colors"
-            >
-              {isAuthenticated ? "Sign Out (demo)" : "Sign In (demo)"}
-            </motion.button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">URL Shortener</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Create branded short links.</p>
           </div>
         </div>
 
@@ -59,8 +50,13 @@ export default function ShortenerPage() {
           error={error}
           setError={setError}
           isAuthenticated={isAuthenticated}
-          toggleAuth={toggleAuth}
         />
+
+        {!user && (
+          <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground card-glow">
+            Sign in from the top-right to save links, manage your history, and track clicks over time.
+          </div>
+        )}
 
         {isAuthenticated && (
           <motion.div

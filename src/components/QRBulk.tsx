@@ -12,7 +12,7 @@ row-2,Hello World,
 row-3,https://github.com,`;
 
 export default function QRBulk() {
-  const { items, progress, total, processing, done, summary, parseCSV, generateAll, reset } = useQRBulk();
+  const { items, progress, total, processing, done, summary, error, parseCSV, generateAll, reset } = useQRBulk();
   const fileRef = useRef<HTMLInputElement>(null);
   const [showErrors, setShowErrors] = useState(false);
 
@@ -34,11 +34,6 @@ export default function QRBulk() {
     a.download = "sample-qr-bulk.csv";
     a.click();
     toast.success("Sample CSV downloaded");
-  }, []);
-
-  const downloadZip = useCallback(() => {
-    // TODO: Replace with actual ZIP download from API response
-    toast.success("Download started (mock)");
   }, []);
 
   const percent = total > 0 ? (progress / total) * 100 : 0;
@@ -83,6 +78,12 @@ export default function QRBulk() {
       {/* Step 2: Preview Table */}
       {items.length > 0 && !done && (
         <div className="space-y-4">
+          {error && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-foreground">
               <FileText className="mr-1.5 inline h-4 w-4" />
@@ -197,13 +198,13 @@ export default function QRBulk() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              onClick={downloadZip}
+              onClick={reset}
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
             >
-              <Download className="h-4 w-4" /> Download ZIP
+              <Upload className="h-4 w-4" /> Generate another batch
             </motion.button>
 
             <button onClick={reset} className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors">

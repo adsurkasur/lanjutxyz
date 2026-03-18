@@ -5,10 +5,20 @@ import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import AuthModal from "@/components/AuthModal";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
   const [dark, setDark] = useState(true);
+  const [authOpen, setAuthOpen] = useState(false);
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
+
+  const navItems = [
+    { href: "/", label: "Home" },
+    { href: "/qr", label: "QR" },
+    { href: "/short", label: "Shortener" },
+  ];
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -35,14 +45,20 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-1">
-          {pathname !== "/" && (
-            <Link
-              href="/"
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Home
-            </Link>
-          )}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                  isActive ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <button
             onClick={() => setDark(!dark)}
             className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground"
@@ -50,11 +66,33 @@ export default function Navbar() {
           >
             {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <button className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-            Sign In
-          </button>
+
+          {user ? (
+            <>
+              <span className="max-w-[180px] truncate px-2 text-sm text-muted-foreground">
+                {user.email?.slice(0, 20)}
+              </span>
+              <button
+                onClick={() => {
+                  void signOut();
+                }}
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setAuthOpen(true)}
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </div>
+
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </motion.nav>
   );
 }

@@ -4,15 +4,15 @@
 
 | Property | Value |
 | --- | --- |
-| Phase | Implement |
-| Task | Rewrite go redirect route error handling and make short URL clickable |
+| Phase | Study |
+| Task | Fix failing Vitest suites and add Cloudflare Turnstile protection |
 | Started | 2026-03-18 09:20 |
-| Last Updated | 2026-03-18 11:23 |
+| Last Updated | 2026-03-18 12:01 |
 | Session ID | 20260318-0920 |
 
 ## User Request
 
-> You are migrating an existing React + Vite project to Next.js App Router in place. Read all files before writing code, use bun only, preserve features, complete all phases in one shot.
+> Read specific files first, fix failing tests by setting env in test setup and mocking Supabase in test files, then add Cloudflare Turnstile to shortener and signup with API verification route, and validate with test/type/build.
 
 ## Execution Plan
 
@@ -150,3 +150,17 @@ User required complete migration without interactive confirmation. Will provide 
 - **11:23** - IMPLEMENT - Rewrote /go/[slug] route with fresh server client, maybeSingle, URL validation, and explicit 302 redirect
 - **11:23** - IMPLEMENT - Replaced short URL code display with clickable anchor in ShortenerForm
 - **11:23** - GATE - Validation passed: bunx tsc --noEmit and bun run build
+- **11:27** - IMPLEMENT - Started comprehensive finalization pass requiring full workspace read before edits
+- **11:39** - IMPLEMENT - Added real auth foundation with `useAuth` hook and `AuthModal` component
+- **11:43** - IMPLEMENT - Wired navbar links and auth state (signin modal, user display, signout)
+- **11:46** - IMPLEMENT - Replaced shortener demo auth with real auth-backed links load/delete and unauthenticated info messaging
+- **11:47** - IMPLEMENT - Added QR single/bulk error handling and removed mock bulk completion action
+- **11:48** - IMPLEMENT - Updated footer to dynamic year and cleaned stale API mock comments
+- **11:51** - GATE - Type check passed: bunx tsc --noEmit
+- **11:53** - GATE - Production build passed: bun run build
+- **11:56** - STUDY - Read required files for test-fix and captcha integration task
+- **11:57** - IMPLEMENT - Added Vitest env setup and rewrote failing API/QR hook tests with Supabase mocking
+- **11:58** - GATE - Test suite passed: bun run test
+- **11:59** - IMPLEMENT - Added Turnstile dependency, verification API route, widget/helper, and form integrations
+- **12:00** - GATE - Validation passed: bun run test and bunx tsc --noEmit
+- **12:01** - GATE - Validation passed: bun run build

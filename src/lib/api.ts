@@ -1,9 +1,3 @@
-// ============================================
-// API Placeholders — Arina Tools
-// All API calls are mocked for MVP.
-// TODO: Replace each with actual fetch calls.
-// ============================================
-
 import { supabase } from "@/lib/supabase";
 
 export interface QRSingleRequest {
@@ -44,12 +38,13 @@ export interface LinkRecord {
 
 const qrApiBaseUrl = process.env.NEXT_PUBLIC_QR_API_URL ?? "https://qr.adsurkasur.my.id";
 const qrApiKey = process.env.NEXT_PUBLIC_QR_API_KEY ?? "";
+const shortBaseUrlRaw = process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/";
+const shortBaseUrl = shortBaseUrlRaw.endsWith("/") ? shortBaseUrlRaw : `${shortBaseUrlRaw}/`;
 
-// --- QR Single ---
-// TODO: Replace with actual API call:
-// POST {qrApiBaseUrl}/api/qr/single
-// Header: X-API-Key from env NEXT_PUBLIC_QR_API_KEY
-// Body: { text: string, logo_base64?: string }
+export function makeShortUrl(slug: string): string {
+  return `${shortBaseUrl}${slug}`;
+}
+
 export async function generateQRSingle(req: QRSingleRequest): Promise<QRSingleResponse> {
   let response: Response;
 
@@ -75,11 +70,6 @@ export async function generateQRSingle(req: QRSingleRequest): Promise<QRSingleRe
   throw new Error(payload.error);
 }
 
-// --- QR Bulk ---
-// TODO: Replace with actual API call:
-// POST {qrApiBaseUrl}/api/qr/bulk
-// Body: { items: [{id, text, logo_base64?}], logo_base64?: string }
-// Response: ZIP file (blob download)
 export async function generateQRBulk(
   items: QRBulkItem[],
   onProgress: (completed: number, total: number) => void
@@ -125,10 +115,6 @@ async function generateUniqueSlug(): Promise<string> {
   return Date.now().toString(36);
 }
 
-// --- URL Shortener ---
-// TODO: Connect to PocketBase
-// POST /api/links
-// Body: { url: string, slug?: string }
 export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> {
   if (!req.url.trim()) {
     throw new Error("URL is required");
@@ -152,8 +138,35 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
   void data;
 
   return {
-    shortUrl: `${process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/"}${slug}`,
+    shortUrl: makeShortUrl(slug),
     slug,
     originalUrl: req.url,
   };
+}
+
+export async function fetchUserLinks(userId: string): Promise<LinkRecord[]> {
+  const { data, error } = await supabase
+    .from("links")
+    .select("id, slug, original_url, click_count, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message || "Failed to load links");
+  }
+
+  return (data || []).map((item) => ({
+    id: String(item.id),
+    shortUrl: makeShortUrl(item.slug),
+    originalUrl: item.original_url,
+    clicks: item.click_count ?? 0,
+    createdAt: (item.created_at ?? "").split("T")[0] || "",
+  }));
+}
+
+export async function deleteLink(id: string): Promise<void> {
+  const { error } = await supabase.from("links").delete().eq("id", id);
+  if (error) {
+    throw new Error(error.message || "Failed to delete link");
+  }
 }

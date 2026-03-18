@@ -7,7 +7,7 @@ import { useCallback, useRef } from "react";
 import { toast } from "sonner";
 
 export default function QRSingle() {
-  const { text, setText, logoPreview, handleLogoUpload, removeLogo, result, loading, generate, setResult } = useQRSingle();
+  const { text, setText, logoPreview, handleLogoUpload, removeLogo, result, loading, error, setError, generate, setResult } = useQRSingle();
   const fileRef = useRef<HTMLInputElement>(null);
   const maxChars = 1000;
 
@@ -54,6 +54,14 @@ export default function QRSingle() {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value.slice(0, maxChars))}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              e.preventDefault();
+              if (!loading && text.trim()) {
+                void generate();
+              }
+            }
+          }}
           placeholder="https://example.com"
           rows={3}
           className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow resize-none"
@@ -103,6 +111,21 @@ export default function QRSingle() {
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {loading ? "Generating..." : "Generate QR"}
       </motion.button>
+
+      <p className="text-center text-xs text-muted-foreground">Tip: press Ctrl+Enter (or Cmd+Enter) to generate</p>
+
+      {error && (
+        <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
+          <p className="text-sm text-destructive">{error}</p>
+          <button
+            onClick={() => setError(null)}
+            className="rounded p-1 text-destructive/80 transition-colors hover:text-destructive"
+            aria-label="Dismiss error"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {/* Result */}
       <AnimatePresence>

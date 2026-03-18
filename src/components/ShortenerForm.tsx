@@ -2,8 +2,10 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Loader2, Link as LinkIcon, X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import TurnstileWidget from "@/components/TurnstileWidget";
+import { verifyCaptcha } from "@/lib/captcha";
 
 interface Props {
   url: string;
@@ -11,20 +13,42 @@ interface Props {
   slug: string;
   setSlug: (v: string) => void;
   loading: boolean;
-  shorten: () => void;
+  shorten: () => void | Promise<void>;
   result: { shortUrl: string; originalUrl: string } | null;
   error: string | null;
   setError: (v: string | null) => void;
   isAuthenticated: boolean;
-  toggleAuth: () => void;
 }
 
-export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, shorten, result, error, setError, isAuthenticated, toggleAuth }: Props) {
+export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, shorten, result, error, setError, isAuthenticated }: Props) {
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (result) {
+      setCaptchaToken(null);
+      setCaptchaVerified(false);
+    }
+  }, [result]);
+
+  const handleShorten = async () => {
+    if (captchaToken) {
+      const valid = await verifyCaptcha(captchaToken);
+      if (!valid) {
+        setError("Captcha verification failed. Please try again.");
+        setCaptchaVerified(false);
+        return;
+      }
+    }
+
+    await shorten();
+  };
 
   const copyUrl = () => {
     if (!result) return;
@@ -57,11 +81,25 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
             className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow"
           />
         </div>
+
+        <TurnstileWidget
+          onVerify={(token) => {
+            setCaptchaToken(token);
+            setCaptchaVerified(true);
+          }}
+          onError={() => {
+            setCaptchaToken(null);
+            setCaptchaVerified(false);
+          }}
+        />
+
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
-          onClick={shorten}
-          disabled={!url.trim() || loading}
+          onClick={() => {
+            void handleShorten();
+          }}
+          disabled={!url.trim() || loading || (!!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaVerified)}
           className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
@@ -119,9 +157,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
               <div className="flex-1 text-xs text-muted-foreground">
                 <p className="truncate">{result.originalUrl}</p>
                 {!isAuthenticated && (
-                  <button onClick={toggleAuth} className="mt-1 font-medium text-primary hover:underline">
-                    Sign in to track clicks →
-                  </button>
+                  <p className="mt-1 text-xs text-muted-foreground">Sign in to track clicks and manage your links.</p>
                 )}
               </div>
             </div>
