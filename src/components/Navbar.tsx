@@ -42,9 +42,9 @@ export default function Navbar() {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
-            <span className="text-xs font-bold text-primary-foreground">A</span>
+            <span className="text-xs font-bold text-primary-foreground">L</span>
           </div>
-          <span className="text-sm font-semibold tracking-tight text-foreground">Arina Tools</span>
+          <span className="text-sm font-semibold tracking-tight text-foreground">Lanjut Tools</span>
         </Link>
 
         <div className="flex items-center gap-0.5 sm:gap-1">

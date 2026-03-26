@@ -53,7 +53,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
           className="w-full rounded-lg border border-input bg-background px-4 py-3 text-base text-foreground placeholder:text-muted-foreground transition-shadow focus:outline-none focus:ring-2 focus:ring-primary/50 sm:text-sm"
         />
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
-          <span className="shrink-0 text-xs text-muted-foreground">arinahub.com/go/</span>
+          <span className="shrink-0 text-xs text-muted-foreground">lanjut.xyz/</span>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value.replace(/[^a-zA-Z0-9-]/g, ""))}

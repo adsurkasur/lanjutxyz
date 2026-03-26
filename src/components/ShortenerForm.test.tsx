@@ -17,7 +17,7 @@ function FormHarness({ isAuthenticated = false }: { isAuthenticated?: boolean })
       slug={slug}
       setSlug={setSlug}
       loading={false}
-      shorten={() => setResult({ shortUrl: "tools.arinahub.com/go/demo1", originalUrl: url })}
+      shorten={() => setResult({ shortUrl: "lanjut.xyz/demo1", originalUrl: url })}
       result={result}
       error={error}
       setError={setError}
@@ -62,7 +62,7 @@ describe("ShortenerForm", () => {
     await user.type(screen.getByPlaceholderText("Paste your long URL here"), "https://example.com");
     await user.click(screen.getByRole("button", { name: "Shorten" }));
 
-    expect(await screen.findByText(/tools.arinahub.com\/go\/demo1/)).toBeInTheDocument();
+    expect(await screen.findByText(/lanjut.xyz\/demo1/)).toBeInTheDocument();
   });
 
   it("shows Sign in to track clicks when not authenticated", async () => {

@@ -21,7 +21,7 @@ test("result card contains a short URL", async ({ page }) => {
   await page.goto("/short");
   await page.getByPlaceholder("Paste your long URL here").fill("https://example.com");
   await page.getByRole("button", { name: "Shorten" }).click();
-  await expect(page.getByText(/tools\.arinahub\.com\/go\//)).toBeVisible();
+  await expect(page.getByText(/lanjut\.xyz\//)).toBeVisible();
 });
 
 test("Copy button shows success toast when clicked", async ({ page }) => {

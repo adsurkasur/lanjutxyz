@@ -38,7 +38,7 @@ export interface LinkRecord {
 
 const qrApiBaseUrl = process.env.NEXT_PUBLIC_QR_API_URL ?? "https://qr.adsurkasur.my.id";
 const qrApiKey = process.env.NEXT_PUBLIC_QR_API_KEY ?? "";
-const shortBaseUrlRaw = process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://arinahub.com/go/";
+const shortBaseUrlRaw = process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://lanjut.xyz/";
 const shortBaseUrl = shortBaseUrlRaw.endsWith("/") ? shortBaseUrlRaw : `${shortBaseUrlRaw}/`;
 
 export function makeShortUrl(slug: string): string {

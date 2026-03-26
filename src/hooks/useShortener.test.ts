@@ -8,7 +8,7 @@ vi.mock("@/hooks/useAuth", () => ({
 
 const { shortenUrlMock } = vi.hoisted(() => ({
   shortenUrlMock: vi.fn(async ({ url, slug }: { url: string; slug?: string }) => ({
-    shortUrl: `https://arinahub.com/go/${slug || "demo123"}`,
+    shortUrl: `https://lanjut.xyz/${slug || "demo123"}`,
     slug: slug || "demo123",
     originalUrl: url,
   })),
