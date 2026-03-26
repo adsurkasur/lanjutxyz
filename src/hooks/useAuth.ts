@@ -1,73 +1,63 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { pb } from "@/lib/pocketbase";
 
 export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(pb.authStore.model);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    // Initial load
+    setUser(pb.authStore.model);
+    setLoading(false);
 
-    const loadSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!isMounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    };
-
-    loadSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-      setLoading(false);
+    // Listen for auth changes
+    const removeListener = pb.authStore.onChange((token, model) => {
+      setUser(model);
     });
 
     return () => {
-      isMounted = false;
-      subscription.unsubscribe();
+      removeListener();
     };
   }, []);
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
     setError(null);
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    if (signInError) {
-      setError(signInError.message);
+    try {
+      await pb.collection("users").authWithPassword(email, password);
+      return true;
+    } catch (err: any) {
+      setError(err.message || "Failed to sign in");
       return false;
     }
-    return true;
   }, []);
 
   const signUpWithEmail = useCallback(async (email: string, password: string) => {
     setError(null);
-    const { error: signUpError } = await supabase.auth.signUp({ email, password });
-    if (signUpError) {
-      setError(signUpError.message);
+    try {
+      await pb.collection("users").create({
+        email,
+        password,
+        passwordConfirm: password,
+        emailVisibility: true,
+      });
+      // Optionally auto sign-in after sign up
+      await pb.collection("users").authWithPassword(email, password);
+      return true;
+    } catch (err: any) {
+      setError(err.message || "Failed to sign up");
       return false;
     }
-    return true;
   }, []);
 
   const signOut = useCallback(async () => {
     setError(null);
-    const { error: signOutError } = await supabase.auth.signOut();
-    if (signOutError) {
-      setError(signOutError.message);
-    }
+    pb.authStore.clear();
   }, []);
 
   return {
     user,
-    session,
+    session: pb.authStore.token ? { user: pb.authStore.model } : null,
     loading,
     signInWithEmail,
     signUpWithEmail,
@@ -75,4 +65,4 @@ export function useAuth() {
     error,
     setError,
   };
-}
+}

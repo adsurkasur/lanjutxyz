@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { pb } from "@/lib/pocketbase";
 
 export interface QRSingleRequest {
   text: string;
@@ -105,12 +105,13 @@ async function generateUniqueSlug(): Promise<string> {
     const slug = Array.from({ length: 7 }, () =>
       chars[Math.floor(Math.random() * chars.length)]
     ).join("");
-    const { data } = await supabase
-      .from("links")
-      .select("slug")
-      .eq("slug", slug)
-      .maybeSingle();
-    if (!data) return slug;
+    
+    try {
+      await pb.collection("links").getFirstListItem(`slug="${slug}"`);
+    } catch {
+      // If error (not found), then slug is unique
+      return slug;
+    }
   }
   return Date.now().toString(36);
 }
@@ -121,52 +122,47 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
   }
 
   const slug = req.slug?.trim() || await generateUniqueSlug();
-  const { data, error } = await supabase
-    .from("links")
-    .insert({
+  
+  try {
+    const record = await pb.collection("links").create({
       slug,
       original_url: req.url,
-      user_id: (await supabase.auth.getUser()).data.user?.id ?? null,
-    })
-    .select()
-    .single();
+      user_id: pb.authStore.model?.id || null,
+    });
 
-  if (error) {
-    throw new Error(error.message);
+    return {
+      shortUrl: makeShortUrl(record.slug),
+      slug: record.slug,
+      originalUrl: record.original_url,
+    };
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to create short link");
   }
-
-  void data;
-
-  return {
-    shortUrl: makeShortUrl(slug),
-    slug,
-    originalUrl: req.url,
-  };
 }
 
 export async function fetchUserLinks(userId: string): Promise<LinkRecord[]> {
-  const { data, error } = await supabase
-    .from("links")
-    .select("id, slug, original_url, click_count, created_at")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+  try {
+    const records = await pb.collection("links").getFullList({
+      filter: `user_id = "${userId}"`,
+      sort: "-created",
+    });
 
-  if (error) {
-    throw new Error(error.message || "Failed to load links");
+    return records.map((item) => ({
+      id: item.id,
+      shortUrl: makeShortUrl(item.slug),
+      originalUrl: item.original_url,
+      clicks: item.click_count ?? 0,
+      createdAt: (item.created ?? "").split(" ")[0] || "",
+    }));
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to load links");
   }
-
-  return (data || []).map((item) => ({
-    id: String(item.id),
-    shortUrl: makeShortUrl(item.slug),
-    originalUrl: item.original_url,
-    clicks: item.click_count ?? 0,
-    createdAt: (item.created_at ?? "").split("T")[0] || "",
-  }));
 }
 
 export async function deleteLink(id: string): Promise<void> {
-  const { error } = await supabase.from("links").delete().eq("id", id);
-  if (error) {
-    throw new Error(error.message || "Failed to delete link");
+  try {
+    await pb.collection("links").delete(id);
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to delete link");
   }
 }

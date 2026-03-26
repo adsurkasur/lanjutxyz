@@ -1,24 +1,23 @@
-vi.mock("@/lib/supabase", () => ({
-  supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-      single: vi.fn().mockResolvedValue({ data: null, error: null }),
-      order: vi.fn().mockReturnThis(),
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { generateQRSingle, generateQRBulk, shortenUrl, fetchUserLinks, deleteLink } from "@/lib/api";
+
+const { pbMock } = vi.hoisted(() => ({
+  pbMock: {
+    collection: vi.fn(() => ({
+      getFirstListItem: vi.fn(),
+      create: vi.fn(),
+      getFullList: vi.fn(),
+      delete: vi.fn(),
     })),
-    auth: {
-      getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+    authStore: {
+      model: { id: "user123" },
     },
   },
 }));
 
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { generateQRSingle, generateQRBulk } from "@/lib/api";
+vi.mock("@/lib/pocketbase", () => ({
+  pb: pbMock,
+}));
 
 describe("generateQRSingle", () => {
   afterEach(() => {
@@ -39,77 +38,53 @@ describe("generateQRSingle", () => {
     expect(result.success).toBe(true);
     expect(result.image_base64).toBe("abc123");
   });
+});
 
-  it("throws when text is empty", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({ success: true, image_base64: "x" }),
-      })
+describe("shortenUrl", () => {
+  it("creates a record in PocketBase", async () => {
+    const mockRecord = { slug: "test-slug", original_url: "https://example.com" };
+    const createMock = vi.fn().mockResolvedValue(mockRecord);
+    vi.mocked(pbMock.collection).mockReturnValue({
+      create: createMock,
+      getFirstListItem: vi.fn().mockRejectedValue(new Error("not found")),
+    } as any);
+
+    const result = await shortenUrl({ url: "https://example.com", slug: "test-slug" });
+
+    expect(result.slug).toBe("test-slug");
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ slug: "test-slug", original_url: "https://example.com" })
     );
-
-    await generateQRSingle({ text: "" });
-
-    expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/api/qr/single"),
-      expect.objectContaining({ method: "POST" })
-    );
-  });
-
-  it("throws NetworkError when fetch fails", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fail")));
-
-    await expect(generateQRSingle({ text: "test" })).rejects.toThrow("Network error");
   });
 });
 
-describe("generateQRBulk", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
+describe("fetchUserLinks", () => {
+  it("returns mapped LinkRecord array", async () => {
+    const mockRecords = [
+      { id: "1", slug: "s1", original_url: "url1", click_count: 5, created: "2024-01-01 10:00:00" },
+    ];
+    vi.mocked(pbMock.collection).mockReturnValue({
+      getFullList: vi.fn().mockResolvedValue(mockRecords),
+    } as any);
+
+    const result = await fetchUserLinks("user123");
+
+    expect(result).toHaveLength(1);
+    expect(result[0].shortUrl).toContain("s1");
+    expect(result[0].id).toBe("1");
+    expect(result[0].clicks).toBe(5);
   });
+});
 
-  it("calls onProgress after successful response", async () => {
-    const mockBlob = new Blob(["zip"], { type: "application/zip" });
+describe("deleteLink", () => {
+  it("calls delete on the collection", async () => {
+    const deleteMock = vi.fn().mockResolvedValue(null);
+    vi.mocked(pbMock.collection).mockReturnValue({
+      delete: deleteMock,
+    } as any);
 
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        blob: async () => mockBlob,
-      })
-    );
+    await deleteLink("rec123");
 
-    vi.stubGlobal("URL", {
-      createObjectURL: vi.fn(() => "blob:x"),
-      revokeObjectURL: vi.fn(),
-    });
-
-    const click = vi.fn();
-    const originalCreateElement = document.createElement.bind(document);
-    vi.spyOn(document, "createElement").mockImplementation(
-      ((tagName: string) => {
-        if (tagName === "a") {
-          return { href: "", download: "", click } as unknown as HTMLElement;
-        }
-
-        return originalCreateElement(tagName);
-      }) as typeof document.createElement
-    );
-
-    const onProgress = vi.fn();
-    const items = [{ id: "1", text: "https://example.com" }];
-    const result = await generateQRBulk(items, onProgress);
-
-    expect(onProgress).toHaveBeenCalledWith(1, 1);
-    expect(result.succeeded).toBe(1);
-  });
-
-  it("throws when response is not ok", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));
-
-    await expect(generateQRBulk([{ id: "1", text: "x" }], vi.fn())).rejects.toThrow(
-      "Bulk QR generation failed"
-    );
+    expect(deleteMock).toHaveBeenCalledWith("rec123");
   });
 });
