@@ -72,13 +72,13 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
                   <div className="mt-3 flex justify-end gap-1">
                     <button
                       onClick={() => copyLink(link.shortUrl)}
-                      className="rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                      className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
                     >
                       <Copy className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => onDelete(link.id)}
-                      className="rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
+                      className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -118,13 +118,13 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
                         <div className="flex justify-end gap-1">
                           <button
                             onClick={() => copyLink(link.shortUrl)}
-                            className="rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                            className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
                           >
                             <Copy className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => onDelete(link.id)}
-                            className="rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
+                            className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>

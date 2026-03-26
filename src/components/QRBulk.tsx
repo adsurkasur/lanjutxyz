@@ -152,7 +152,7 @@ export default function QRBulk() {
               whileTap={buttonTap}
               transition={buttonTransition}
               onClick={generateAll}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
             >
               Generate All
             </motion.button>
@@ -204,12 +204,12 @@ export default function QRBulk() {
               whileTap={buttonTap}
               transition={buttonTransition}
               onClick={reset}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground"
             >
               <Upload className="h-4 w-4" /> Generate another batch
             </motion.button>
 
-            <button onClick={reset} className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={reset} className="w-full cursor-pointer text-center text-xs text-muted-foreground hover:text-foreground transition-colors">
               Start over
             </button>
           </motion.div>

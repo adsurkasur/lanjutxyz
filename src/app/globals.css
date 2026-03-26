@@ -131,6 +131,14 @@
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
   }
+
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
 }
 
 @layer utilities {

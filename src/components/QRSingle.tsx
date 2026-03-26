@@ -114,7 +114,7 @@ export default function QRSingle() {
         transition={buttonTransition}
         onClick={generate}
         disabled={!text.trim() || loading}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {loading ? "Generating..." : "Generate QR"}
@@ -158,7 +158,7 @@ export default function QRSingle() {
                 whileTap={buttonTap}
                 transition={buttonTransition}
                 onClick={downloadImage}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground sm:w-auto"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground sm:w-auto"
               >
                 <Download className="h-4 w-4" /> Download PNG
               </motion.button>
@@ -167,12 +167,12 @@ export default function QRSingle() {
                 whileTap={buttonTap}
                 transition={buttonTransition}
                 onClick={copyImage}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground sm:w-auto"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground sm:w-auto"
               >
                 <Copy className="h-4 w-4" /> Copy
               </motion.button>
             </div>
-            <button onClick={() => setResult(null)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => setResult(null)} className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors">
               Clear result
             </button>
           </motion.div>
