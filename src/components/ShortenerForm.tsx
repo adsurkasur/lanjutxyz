@@ -93,7 +93,6 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
             </button>
           </div>
         )}
-      </div>
 
       <AnimatePresence>
         {result && (
