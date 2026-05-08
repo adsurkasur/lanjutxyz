@@ -21,7 +21,6 @@ export default function Navbar() {
     { href: "/", label: "Home", icon: Home },
     { href: "/qr", label: "QR", icon: QrCode },
     { href: "/short", label: "Shortener", icon: LinkIcon },
-    { href: "/about", label: "About", icon: Info },
   ];
 
   useEffect(() => {
@@ -109,6 +108,18 @@ export default function Navbar() {
           </motion.button>
 
           <DonationTrigger onClick={() => setDonationOpen(true)} />
+          
+          <Link href="/about">
+            <motion.button
+              whileHover={{ ...buttonHover, color: "#3b82f6" }}
+              whileTap={buttonTap}
+              transition={buttonTransition}
+              className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-blue-500"
+              aria-label="About"
+            >
+              <Info className="h-4 w-4" />
+            </motion.button>
+          </Link>
 
           {user ? (
             <>
