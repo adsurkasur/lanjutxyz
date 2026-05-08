@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Info, Link as LinkIcon, LogIn, Moon, QrCode, Sun } from "lucide-react";
+import { Home, Info, Link as LinkIcon, LogIn, LogOut, Moon, QrCode, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "@/components/AuthModal";
@@ -133,7 +133,19 @@ export default function Navbar() {
                 onClick={() => {
                   void signOut();
                 }}
-                className="cursor-pointer rounded-lg px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-3 sm:text-sm"
+                className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground sm:hidden"
+                aria-label="Sign Out"
+              >
+                <LogOut className="h-4 w-4" />
+              </motion.button>
+              <motion.button
+                whileHover={buttonHover}
+                whileTap={buttonTap}
+                transition={buttonTransition}
+                onClick={() => {
+                  void signOut();
+                }}
+                className="hidden cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
               >
                 Sign Out
               </motion.button>

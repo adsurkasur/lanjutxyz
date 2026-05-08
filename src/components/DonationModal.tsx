@@ -286,7 +286,7 @@ export default function DonationModal({ open, onClose }: Props) {
             onClick={(e) => e.stopPropagation()}
             className="fixed inset-0 z-[60] grid place-items-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto relative w-full max-w-md rounded-2xl border border-border bg-card shadow-2xl">
+            <div className="pointer-events-auto relative w-[94vw] max-w-md rounded-2xl border border-border bg-card shadow-2xl sm:w-full">
               <div className="flex items-center justify-between border-b border-border px-5 py-4">
                 <div className="flex items-center gap-2">
                   <Heart className="h-4 w-4 text-rose-400" fill="currentColor" />
@@ -301,7 +301,7 @@ export default function DonationModal({ open, onClose }: Props) {
                 </button>
               </div>
 
-              <div className="max-h-[65vh] space-y-5 overflow-y-auto overflow-x-hidden px-5 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border">
+              <div className="max-h-[70vh] space-y-5 overflow-y-auto overflow-x-hidden px-5 py-4 sm:max-h-[65vh] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border">
                 <p className="text-sm text-muted-foreground">
                   If you enjoy this app, consider supporting its development. Every contribution helps keep it free and improving!
                 </p>
