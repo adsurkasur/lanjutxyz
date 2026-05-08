@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -185,10 +185,29 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   />
                 </div>
 
-                {error && <p className="text-sm text-destructive">{error}</p>}
-                {activeTab === "signup" && successMessage && (
-                  <p className="text-sm text-muted-foreground">{successMessage}</p>
-                )}
+                <AnimatePresence mode="wait">
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+                    >
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      <p>{error}</p>
+                    </motion.div>
+                  )}
+                  {activeTab === "signup" && successMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3 text-sm text-primary"
+                    >
+                      <p>{successMessage}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <button
                   type="submit"
