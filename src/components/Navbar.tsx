@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Link as LinkIcon, LogIn, Moon, QrCode, Sun } from "lucide-react";
+import { Home, Info, Link as LinkIcon, LogIn, Moon, QrCode, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "@/components/AuthModal";
@@ -21,6 +21,7 @@ export default function Navbar() {
     { href: "/", label: "Home", icon: Home },
     { href: "/qr", label: "QR", icon: QrCode },
     { href: "/short", label: "Shortener", icon: LinkIcon },
+    { href: "/about", label: "About", icon: Info },
   ];
 
   useEffect(() => {
