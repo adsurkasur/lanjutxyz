@@ -37,13 +37,16 @@ export async function GET(
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // Increment click count (awaiting ensures it completes in serverless environments)
+    // Increment click count
     try {
+      // We use a non-blocking update but await it to ensure it's sent
+      // before the response is returned in serverless environments.
       await pb.collection("links").update(record.id, {
         "click_count+": 1,
       });
     } catch (err) {
-      console.error("Failed to increment click count:", err);
+      // This will fail if RLS permissions are not set correctly in PocketBase
+      console.error(`Click tracking failed for ${slug}:`, err);
     }
 
     return NextResponse.redirect(target, { status: 302 });

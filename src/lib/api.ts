@@ -217,3 +217,14 @@ export async function deleteLink(id: string): Promise<void> {
     throw new Error(err.message || "Failed to delete link");
   }
 }
+
+export async function claimLink(id: string, userId: string): Promise<void> {
+  try {
+    await pb.collection("links").update(id, {
+      user_id: userId,
+    });
+  } catch (err: any) {
+    console.error(`Failed to claim link ${id}:`, err);
+    throw new Error(err.message || "Failed to claim link");
+  }
+}

@@ -6,11 +6,13 @@ import {
   fetchUserLinks,
   fetchLinksByIds,
   deleteLink as deleteLinkApi,
+  claimLink,
   type ShortenResponse,
   type LinkRecord,
 } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { pb } from "@/lib/pocketbase";
+import { toast } from "sonner";
 
 export interface UILinkRecord extends LinkRecord {
   isLocal?: boolean;
@@ -83,6 +85,56 @@ export function useShortener() {
   useEffect(() => {
     void loadLinks();
   }, [loadLinks]);
+
+  const syncLocalLinks = useCallback(async (userId: string) => {
+    const stored = localStorage.getItem("lanjut_anon_links");
+    if (!stored) return;
+
+    try {
+      const localLinks = JSON.parse(stored) as LinkRecord[];
+      if (localLinks.length === 0) return;
+
+      toast.promise(
+        Promise.all(
+          localLinks.map(async (link) => {
+            if (!link.id.startsWith("temp-")) {
+              await claimLink(link.id, userId);
+            } else {
+              // Re-create temporary links on the server
+              await shortenUrl({ url: link.originalUrl, slug: undefined });
+            }
+          })
+        ),
+        {
+          loading: "Syncing local links to your account...",
+          success: () => {
+            localStorage.removeItem("lanjut_anon_links");
+            void loadLinks();
+            return "Links synced to your account!";
+          },
+          error: "Failed to sync some links",
+        }
+      );
+    } catch (err) {
+      console.error("Failed to sync links:", err);
+    }
+  }, [loadLinks]);
+
+  // Sync on login
+  useEffect(() => {
+    if (user?.id) {
+      const stored = localStorage.getItem("lanjut_anon_links");
+      if (stored) {
+        try {
+          if (JSON.parse(stored).length > 0) {
+            void syncLocalLinks(user.id);
+          }
+        } catch (e) {
+          console.error("Failed to parse stored links for sync:", e);
+        }
+      }
+    }
+  }, [user?.id, syncLocalLinks]);
 
   // Real-time click updates
   useEffect(() => {

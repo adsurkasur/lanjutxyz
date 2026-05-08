@@ -27,7 +27,8 @@ export function useAuth() {
       await pb.collection("users").authWithPassword(email, password);
       return true;
     } catch (err: any) {
-      setError(err.message || "Failed to sign in");
+      // Standardize to a safe, generic message
+      setError("Invalid email or password. Please try again.");
       return false;
     }
   }, []);
@@ -45,7 +46,8 @@ export function useAuth() {
       await pb.collection("users").authWithPassword(email, password);
       return true;
     } catch (err: any) {
-      setError(err.message || "Failed to sign up");
+      // General error for account creation issues
+      setError("There was a problem creating your account. Please check your details or try signing in.");
       return false;
     }
   }, []);

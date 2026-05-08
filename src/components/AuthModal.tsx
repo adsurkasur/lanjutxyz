@@ -22,6 +22,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
   useEffect(() => {
     setCaptchaToken(null);
+    setCaptchaKey(0); // Reset key on tab change
   }, [activeTab]);
 
   const handleSubmit = async () => {
@@ -52,6 +54,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       const valid = await verifyCaptcha(captchaToken);
       if (!valid) {
         setError("Captcha verification failed.");
+        setCaptchaKey((prev) => prev + 1);
+        setCaptchaToken(null);
         setSubmitting(false);
         return;
       }
@@ -61,11 +65,20 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       const ok = await signInWithEmail(email, password);
       if (ok) {
         onClose();
+      } else {
+        // Refresh captcha on failure
+        setCaptchaKey((prev) => prev + 1);
+        setCaptchaToken(null);
       }
     } else {
       const ok = await signUpWithEmail(email, password);
       if (ok) {
         // setSuccessMessage("Check your email to confirm your account");
+        setCaptchaToken(null);
+        onClose(); // Automatically close on successful signup as well
+      } else {
+        // Refresh captcha on failure
+        setCaptchaKey((prev) => prev + 1);
         setCaptchaToken(null);
       }
     }
@@ -166,7 +179,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
                 <div className="flex justify-center">
                   <TurnstileWidget
-                    key={activeTab}
+                    key={`${activeTab}-${captchaKey}`}
                     onVerify={setCaptchaToken}
                     onError={() => setCaptchaToken(null)}
                   />
