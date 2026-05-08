@@ -9,7 +9,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lanjut Tools",
+  title: "Lanjut",
   description: "Simple tools, serious results.",
   icons: {
     icon: "/favicon.ico",
