@@ -107,25 +107,49 @@ async function generateUniqueSlug(): Promise<string> {
     
     try {
       await pb.collection("links").getFirstListItem(`slug="${slug}"`);
-    } catch {
-      // If error (not found), then slug is unique
-      return slug;
+    } catch (err: any) {
+      // If error is 404 (not found), then slug is unique
+      if (err.status === 404) {
+        return slug;
+      }
+      // If it's another error (network, etc.), we should probably log it but continue to next attempt or throw
+      console.warn("Slug check error:", err);
     }
   }
   return Date.now().toString(36);
 }
 
 export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> {
-  if (!req.url.trim()) {
+  let url = req.url.trim();
+  if (!url) {
     throw new Error("URL is required");
   }
 
-  const slug = req.slug?.trim() || await generateUniqueSlug();
+  // Basic URL normalization
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = `https://${url}`;
+  }
+
+  let slug = req.slug?.trim();
+  
+  if (slug) {
+    // Check if custom slug is already taken
+    try {
+      await pb.collection("links").getFirstListItem(`slug="${slug}"`);
+      throw new Error("This custom link is already taken");
+    } catch (err: any) {
+      if (err.status !== 404) {
+        throw new Error(err.message || "Failed to verify link availability");
+      }
+    }
+  } else {
+    slug = await generateUniqueSlug();
+  }
   
   try {
     const record = await pb.collection("links").create({
       slug,
-      original_url: req.url,
+      original_url: url,
       user_id: pb.authStore.model?.id || null,
     });
 
@@ -135,6 +159,9 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
       originalUrl: record.original_url,
     };
   } catch (err: any) {
+    if (err.status === 400 && err.data?.slug) {
+      throw new Error("This custom link is already taken");
+    }
     throw new Error(err.message || "Failed to create short link");
   }
 }

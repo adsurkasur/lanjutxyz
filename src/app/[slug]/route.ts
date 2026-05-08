@@ -37,10 +37,14 @@ export async function GET(
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // Increment click count asynchronously (fire and forget in this context or wait if desired)
-    void pb.collection("links").update(record.id, {
-      "click_count+": 1,
-    });
+    // Increment click count (awaiting ensures it completes in serverless environments)
+    try {
+      await pb.collection("links").update(record.id, {
+        "click_count+": 1,
+      });
+    } catch (err) {
+      console.error("Failed to increment click count:", err);
+    }
 
     return NextResponse.redirect(target, { status: 302 });
   } catch {
