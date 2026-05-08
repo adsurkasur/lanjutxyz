@@ -44,7 +44,7 @@ export default function HomePage() {
             Simple tools, serious results.
           </h1>
           <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
-            QR codes and short links - built for people who care about details.
+            QR codes and short links — simple, fast, and reliable.
           </p>
         </div>
 
