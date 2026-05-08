@@ -95,13 +95,10 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Support CTA */}
-        <motion.div variants={itemVariants} className="text-center space-y-6">
+        <motion.div variants={itemVariants} className="space-y-8 pt-8 border-t border-border text-center">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-xs font-medium text-primary">
-              <Heart className="h-3 w-3 fill-current" />
-              Community Supported
-            </div>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+            <h2 className="text-2xl font-bold text-foreground">Support Lanjut</h2>
+            <p className="text-muted-foreground">
               Lanjut is free to use. Your support helps keep the tools fast and ad-free for everyone.
             </p>
           </div>
