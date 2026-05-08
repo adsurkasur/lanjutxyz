@@ -50,7 +50,7 @@ export default function Navbar() {
           />
         </Link>
 
-        <div className="flex items-center gap-0.5 sm:gap-1">
+        <div className="flex min-w-0 items-center gap-0.5 sm:gap-1">
           <div className="flex items-center gap-0.5 sm:hidden">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -111,8 +111,8 @@ export default function Navbar() {
 
           {user ? (
             <>
-              <span className="hidden max-w-[180px] truncate px-2 text-sm text-muted-foreground sm:block">
-                {user.email?.slice(0, 20)}
+              <span className="hidden truncate px-2 text-sm text-muted-foreground sm:block sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">
+                {user.email}
               </span>
               <motion.button
                 whileHover={buttonHover}

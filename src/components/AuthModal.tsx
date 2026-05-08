@@ -62,7 +62,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     } else {
       const ok = await signUpWithEmail(email, password);
       if (ok) {
-        setSuccessMessage("Check your email to confirm your account");
+        // setSuccessMessage("Check your email to confirm your account");
         setCaptchaToken(null);
       }
     }
@@ -157,6 +157,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
                 <div className="flex justify-center">
                   <TurnstileWidget
+                    key={activeTab}
                     onVerify={setCaptchaToken}
                     onError={() => setCaptchaToken(null)}
                   />
