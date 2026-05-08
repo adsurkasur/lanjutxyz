@@ -91,7 +91,7 @@ export default function Navbar() {
             whileTap={buttonTap}
             transition={buttonTransition}
             onClick={() => setDark(!dark)}
-            className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Toggle theme"
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -133,7 +133,7 @@ export default function Navbar() {
                 onClick={() => {
                   void signOut();
                 }}
-                className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground sm:hidden"
+                className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground sm:hidden"
                 aria-label="Sign Out"
               >
                 <LogOut className="h-4 w-4" />
@@ -145,7 +145,7 @@ export default function Navbar() {
                 onClick={() => {
                   void signOut();
                 }}
-                className="hidden cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
+                className="hidden rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
               >
                 Sign Out
               </motion.button>
@@ -157,7 +157,7 @@ export default function Navbar() {
                 whileTap={buttonTap}
                 transition={buttonTransition}
                 onClick={() => setAuthOpen(true)}
-                className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground sm:hidden"
+                className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground sm:hidden"
                 aria-label="Sign In"
               >
                 <LogIn className="h-4 w-4" />
@@ -167,7 +167,7 @@ export default function Navbar() {
                 whileTap={buttonTap}
                 transition={buttonTransition}
                 onClick={() => setAuthOpen(true)}
-                className="hidden cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
+                className="hidden rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
               >
                 Sign In
               </motion.button>

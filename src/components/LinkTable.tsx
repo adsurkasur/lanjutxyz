@@ -3,11 +3,11 @@
 import { Copy, Trash2, Link as LinkIcon, MousePointerClick, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import type { LinkRecord } from "@/lib/api";
+import type { UILinkRecord } from "@/hooks/useShortener";
 import { itemVariants } from "@/lib/motion";
 
 interface Props {
-  links: LinkRecord[];
+  links: UILinkRecord[];
   totalClicks: number;
   onDelete: (id: string) => void;
   isAuthenticated?: boolean;
@@ -61,14 +61,21 @@ export default function LinkTable({ links, totalClicks, onDelete, isAuthenticate
             <div className="space-y-2 md:hidden">
               {links.map((link) => (
                 <div key={link.id} className="rounded-xl border border-border bg-card p-3 card-glow">
-                  <a
-                    href={link.shortUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block truncate font-mono text-xs text-primary transition-colors hover:text-primary/80 hover:underline"
-                  >
-                    {link.shortUrl}
-                  </a>
+                  <div className="flex items-center justify-between">
+                    <a
+                      href={link.shortUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block truncate font-mono text-xs text-primary transition-colors hover:text-primary/80 hover:underline"
+                    >
+                      {link.shortUrl}
+                    </a>
+                    {link.isLocal && (
+                      <span className="rounded bg-secondary/50 px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                        Local
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-1 truncate text-xs text-muted-foreground">{link.originalUrl}</p>
                   <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
                     <span>{link.clicks} clicks</span>
@@ -77,13 +84,13 @@ export default function LinkTable({ links, totalClicks, onDelete, isAuthenticate
                   <div className="mt-3 flex justify-end gap-1">
                     <button
                       onClick={() => copyLink(link.shortUrl)}
-                      className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                      className="rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
                     >
                       <Copy className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => onDelete(link.id)}
-                      className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
+                      className="rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -107,14 +114,21 @@ export default function LinkTable({ links, totalClicks, onDelete, isAuthenticate
                   {links.map((link) => (
                     <tr key={link.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-2.5">
-                        <a
-                          href={link.shortUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-mono text-xs text-primary transition-colors hover:text-primary/80 hover:underline"
-                        >
-                          {link.shortUrl}
-                        </a>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={link.shortUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-xs text-primary transition-colors hover:text-primary/80 hover:underline"
+                          >
+                            {link.shortUrl}
+                          </a>
+                          {link.isLocal && (
+                            <span className="rounded bg-secondary/50 px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                              Local
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="max-w-[180px] truncate px-4 py-2.5 text-muted-foreground">{link.originalUrl}</td>
                       <td className="px-4 py-2.5 text-right font-medium">{link.clicks}</td>
@@ -123,13 +137,13 @@ export default function LinkTable({ links, totalClicks, onDelete, isAuthenticate
                         <div className="flex justify-end gap-1">
                           <button
                             onClick={() => copyLink(link.shortUrl)}
-                            className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                            className="rounded p-1.5 text-muted-foreground transition-colors hover:text-foreground"
                           >
                             <Copy className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => onDelete(link.id)}
-                            className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
+                            className="rounded p-1.5 text-muted-foreground transition-colors hover:text-destructive"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>

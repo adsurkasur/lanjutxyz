@@ -15,7 +15,7 @@ export function DonationTrigger({ onClick }: TriggerProps) {
   return (
     <button
       onClick={onClick}
-      className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:text-rose-400"
+      className="rounded-lg p-2 text-muted-foreground transition-colors hover:text-rose-400"
       aria-label="Support Me"
       type="button"
     >
@@ -131,7 +131,7 @@ function CryptoCard({ name, address, icon }: (typeof CRYPTO)[0]) {
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.15 }}
       style={{ transformOrigin: "center" }}
-      className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/30 will-change-transform"
+      className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/30 will-change-transform"
     >
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
         {icon}
@@ -206,7 +206,7 @@ function QrisModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
                   type="button"
                 >
                   <X className="h-4 w-4" />
@@ -227,7 +227,7 @@ function QrisModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 
               <button
                 onClick={handleDownload}
-                className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
                 type="button"
               >
                 <Download className="h-4 w-4" />
@@ -294,7 +294,7 @@ export default function DonationModal({ open, onClose }: Props) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="cursor-pointer rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground"
                   type="button"
                 >
                   <X className="h-4 w-4" />
@@ -339,7 +339,7 @@ export default function DonationModal({ open, onClose }: Props) {
                       whileHover={{ scale: 1.01 }}
                       transition={{ duration: 0.15 }}
                       style={{ transformOrigin: "center" }}
-                      className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/30 will-change-transform"
+                      className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/30 will-change-transform"
                     >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                         <QrCode className="h-5 w-5 text-primary" />

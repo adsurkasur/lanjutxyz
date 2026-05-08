@@ -70,11 +70,11 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
 
         <motion.button
           type="submit"
-          whileHover={buttonHover}
-          whileTap={buttonTap}
+          whileHover={!url.trim() || loading ? undefined : buttonHover}
+          whileTap={!url.trim() || loading ? undefined : buttonTap}
           transition={buttonTransition}
           disabled={!url.trim() || loading}
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
           {loading ? "Shortening..." : "Shorten"}
