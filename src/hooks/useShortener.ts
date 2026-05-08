@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import {
   shortenUrl,
   fetchUserLinks,
+  fetchLinksByIds,
   deleteLink as deleteLinkApi,
   type ShortenResponse,
   type LinkRecord,
@@ -22,16 +23,44 @@ export function useShortener() {
   const isAuthenticated = !!user;
 
   const loadLinks = useCallback(async () => {
-    if (!user) {
-      setLinks([]);
-      return;
-    }
-
-    try {
-      const fetched = await fetchUserLinks(user.id);
-      setLinks(fetched);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load links");
+    if (user) {
+      try {
+        const fetched = await fetchUserLinks(user.id);
+        setLinks(fetched);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load links");
+      }
+    } else {
+      // Load from localStorage for anonymous users
+      const stored = localStorage.getItem("lanjut_anon_links");
+      if (stored) {
+        try {
+          const localLinks = JSON.parse(stored) as LinkRecord[];
+          setLinks(localLinks);
+          
+          // Refresh click counts from server
+          if (localLinks.length > 0) {
+            const ids = localLinks.map(l => l.id).filter(id => !id.startsWith("temp-"));
+            if (ids.length > 0) {
+              const updated = await fetchLinksByIds(ids);
+              // Merge updated data with existing local links (to preserve temporary ones if any)
+              setLinks(prev => {
+                const merged = prev.map(p => {
+                  const u = updated.find(up => up.id === p.id);
+                  return u ? u : p;
+                });
+                localStorage.setItem("lanjut_anon_links", JSON.stringify(merged));
+                return merged;
+              });
+            }
+          }
+        } catch (err) {
+          console.error("Failed to parse local links:", err);
+          setLinks([]);
+        }
+      } else {
+        setLinks([]);
+      }
     }
   }, [user]);
 
@@ -51,16 +80,18 @@ export function useShortener() {
       if (user) {
         await loadLinks();
       } else {
-        setLinks((prev) => [
-          {
-            id: String(Date.now()),
-            shortUrl: res.shortUrl,
-            originalUrl: res.originalUrl,
-            clicks: 0,
-            createdAt: new Date().toISOString().split("T")[0],
-          },
-          ...prev,
-        ]);
+        const newRecord: LinkRecord = {
+          id: res.id || `temp-${Date.now()}`,
+          shortUrl: res.shortUrl,
+          originalUrl: res.originalUrl,
+          clicks: 0,
+          createdAt: new Date().toISOString().split("T")[0],
+        };
+        setLinks((prev) => {
+          const updated = [newRecord, ...prev];
+          localStorage.setItem("lanjut_anon_links", JSON.stringify(updated));
+          return updated;
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -78,6 +109,10 @@ export function useShortener() {
 
       try {
         await deleteLinkApi(id);
+        if (!user) {
+          const updated = links.filter((l) => l.id !== id);
+          localStorage.setItem("lanjut_anon_links", JSON.stringify(updated));
+        }
       } catch (err) {
         setLinks((prev) => [existing, ...prev]);
         setError(err instanceof Error ? err.message : "Failed to delete link");

@@ -23,6 +23,7 @@ export interface ShortenRequest {
 }
 
 export interface ShortenResponse {
+  id: string;
   shortUrl: string;
   slug: string;
   originalUrl: string;
@@ -154,6 +155,7 @@ export async function shortenUrl(req: ShortenRequest): Promise<ShortenResponse> 
     });
 
     return {
+      id: record.id,
       shortUrl: makeShortUrl(record.slug),
       slug: record.slug,
       originalUrl: record.original_url,
@@ -170,6 +172,29 @@ export async function fetchUserLinks(userId: string): Promise<LinkRecord[]> {
   try {
     const records = await pb.collection("links").getFullList({
       filter: `user_id = "${userId}"`,
+      sort: "-created",
+    });
+
+    return records.map((item) => ({
+      id: item.id,
+      shortUrl: makeShortUrl(item.slug),
+      originalUrl: item.original_url,
+      clicks: item.click_count ?? 0,
+      createdAt: (item.created ?? "").split(" ")[0] || "",
+    }));
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to load links");
+  }
+}
+
+export async function fetchLinksByIds(ids: string[]): Promise<LinkRecord[]> {
+  if (ids.length === 0) return [];
+  
+  try {
+    // PocketBase filter for multiple IDs: id="id1" || id="id2" ...
+    const filter = ids.map(id => `id = "${id}"`).join(" || ");
+    const records = await pb.collection("links").getFullList({
+      filter,
       sort: "-created",
     });
 

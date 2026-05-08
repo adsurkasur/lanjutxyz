@@ -10,9 +10,10 @@ interface Props {
   links: LinkRecord[];
   totalClicks: number;
   onDelete: (id: string) => void;
+  isAuthenticated?: boolean;
 }
 
-export default function LinkTable({ links, totalClicks, onDelete }: Props) {
+export default function LinkTable({ links, totalClicks, onDelete, isAuthenticated }: Props) {
   const thisMonth = new Date().toISOString().slice(0, 7);
 
   const copyLink = (shortUrl: string) => {
@@ -47,9 +48,13 @@ export default function LinkTable({ links, totalClicks, onDelete }: Props) {
       <div>
         <h3 className="mb-3 text-sm font-medium text-foreground">My Links</h3>
         {links.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-12 card-glow">
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-12 card-glow text-center">
             <LinkIcon className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No links yet. Create your first short link above.</p>
+            <p className="text-sm text-muted-foreground max-w-[250px]">
+              {isAuthenticated 
+                ? "No links in your account yet. Create your first short link above." 
+                : "No links created in this browser yet."}
+            </p>
           </div>
         ) : (
           <>

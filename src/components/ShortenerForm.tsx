@@ -132,7 +132,7 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
               <div className="flex-1 text-xs text-muted-foreground">
                 <p className="truncate">{result.originalUrl}</p>
                 {!isAuthenticated && (
-                  <p className="mt-1 text-xs text-muted-foreground">Sign in to track clicks and manage your links.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">History and clicks are saved locally in your browser.</p>
                 )}
               </div>
             </div>

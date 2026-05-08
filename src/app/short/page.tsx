@@ -54,20 +54,24 @@ export default function ShortenerPage() {
         />
 
         {!user && (
-          <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground card-glow">
-            Sign in from the top-right to save links, manage your history, and track clicks over time.
+          <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground card-glow text-center">
+            <p>Your history is saved locally in this browser.</p>
+            <p className="mt-1 text-xs opacity-70">Sign in to sync your links across all devices and unlock advanced tracking.</p>
           </div>
         )}
 
-        {isAuthenticated && (
-          <motion.div
-            variants={itemVariants}
-            initial="hidden"
-            animate="show"
-          >
-            <LinkTable links={links} totalClicks={totalClicks} onDelete={deleteLink} />
-          </motion.div>
-        )}
+        <motion.div
+          variants={itemVariants}
+          initial="hidden"
+          animate="show"
+        >
+          <LinkTable 
+            links={links} 
+            totalClicks={totalClicks} 
+            onDelete={deleteLink} 
+            isAuthenticated={isAuthenticated}
+          />
+        </motion.div>
       </div>
     </motion.main>
   );
