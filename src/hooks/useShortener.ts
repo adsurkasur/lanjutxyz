@@ -10,6 +10,7 @@ import {
   type LinkRecord,
 } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { pb } from "@/lib/pocketbase";
 
 export function useShortener() {
   const { user } = useAuth();
@@ -67,6 +68,55 @@ export function useShortener() {
   useEffect(() => {
     void loadLinks();
   }, [loadLinks]);
+
+  // Real-time click updates
+  useEffect(() => {
+    let filter = "";
+    if (user) {
+      filter = `user_id = "${user.id}"`;
+    } else if (links.length > 0) {
+      const ids = links.map(l => l.id).filter(id => !id.startsWith("temp-"));
+      if (ids.length > 0) {
+        filter = ids.map(id => `id = "${id}"`).join(" || ");
+      }
+    }
+
+    if (!filter) return;
+
+    const subscribe = async () => {
+      try {
+        await pb.collection("links").subscribe("*", (e) => {
+          if (e.action === "update") {
+            setLinks((prev) => {
+              const updated = prev.map((l) => {
+                if (l.id === e.record.id) {
+                  return {
+                    ...l,
+                    clicks: e.record.click_count ?? 0,
+                  };
+                }
+                return l;
+              });
+              
+              if (!user) {
+                localStorage.setItem("lanjut_anon_links", JSON.stringify(updated));
+              }
+              
+              return updated;
+            });
+          }
+        }, { filter });
+      } catch (err) {
+        console.error("Real-time subscription error:", err);
+      }
+    };
+
+    void subscribe();
+
+    return () => {
+      void pb.collection("links").unsubscribe("*");
+    };
+  }, [user, links.length]); // Re-subscribe if list length changes (to update filters for anon users)
 
   const shorten = useCallback(async () => {
     if (!url.trim()) return;
