@@ -36,7 +36,6 @@ export interface LinkRecord {
   createdAt: string;
 }
 
-const qrApiBaseUrl = process.env.NEXT_PUBLIC_QR_API_URL ?? "https://qr.adsurkasur.my.id";
 const qrApiKey = process.env.NEXT_PUBLIC_QR_API_KEY ?? "";
 const shortBaseUrlRaw = process.env.NEXT_PUBLIC_SHORT_BASE_URL ?? "https://lanjut.xyz/";
 const shortBaseUrl = shortBaseUrlRaw.endsWith("/") ? shortBaseUrlRaw : `${shortBaseUrlRaw}/`;
@@ -49,7 +48,7 @@ export async function generateQRSingle(req: QRSingleRequest): Promise<QRSingleRe
   let response: Response;
 
   try {
-    response = await fetch(`${qrApiBaseUrl}/api/qr/single`, {
+    response = await fetch(`/api/qr-proxy/single`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -74,7 +73,7 @@ export async function generateQRBulk(
   items: QRBulkItem[],
   onProgress: (completed: number, total: number) => void
 ): Promise<{ succeeded: number; failed: number; errors: string[] }> {
-  const response = await fetch(`${qrApiBaseUrl}/api/qr/bulk`, {
+  const response = await fetch(`/api/qr-proxy/bulk`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
