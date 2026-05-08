@@ -5,6 +5,7 @@ import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import { verifyCaptcha } from "@/lib/captcha";
 
@@ -26,6 +27,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   useEffect(() => {
     setPortalEl(document.body);
   }, []);
+
+  useLockBodyScroll(open);
 
   useEffect(() => {
     setCaptchaToken(null);
@@ -139,7 +142,13 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmit();
+                }}
+                className="space-y-4"
+              >
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -169,14 +178,14 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 )}
 
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={submitting}
                   className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
                 >
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   {activeTab === "signin" ? "Sign In" : "Sign Up"}
                 </button>
-              </div>
+              </form>
             </div>
           </motion.div>
         </>

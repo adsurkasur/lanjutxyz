@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Copy, Check, ExternalLink, X, Download, QrCode, Coffee } from "lucide-react";
 import { toast } from "sonner";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 interface TriggerProps {
   onClick: () => void;
@@ -35,6 +36,16 @@ const PLATFORMS = [
     label: "ko-fi.com/adsurkasur",
     href: "https://ko-fi.com/adsurkasur",
     icon: <Coffee className="h-5 w-5 text-primary" />,
+  },
+  {
+    name: "PayPal",
+    label: "paypal.me/adsurkasur",
+    href: "https://paypal.me/adsurkasur",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-primary">
+        <path d="M20.067 6.378c.492 2.503-.191 5.733-3.613 5.733h-1.782c-.633 0-.96.376-1.1 1.059l-.792 4.045c-.06.31-.225.503-.434.503H8.71c-.34 0-.48-.255-.383-.75l2.091-10.665c.101-.512.44-.75 1.053-.75h4.195c1.554 0 3.94.135 4.391 3.235-.04 1.593-1.026 2.501-2.474 3.023l.118.061c.42.17 1.042.451 1.411.96.34.469.347 1.011.233 1.63-.377 2.046-1.921 3.193-4.101 3.193h-1.76c-.633 0-.96.376-1.1 1.059l-.427 2.18c-.06.31-.225.503-.434.503H5.704c-.34 0-.48-.255-.383-.75l2.092-10.665C7.514 2.805 7.853 2.567 8.466 2.567h4.195c3.21 0 6.914.71 7.406 3.811z" />
+      </svg>
+    ),
   },
 ];
 
@@ -158,6 +169,8 @@ function QrisModal({ open, onClose }: { open: boolean; onClose: () => void }) {
     }
   }, []);
 
+  useLockBodyScroll(open);
+
   if (!portalEl) return null;
 
   return createPortal(
@@ -245,6 +258,8 @@ export default function DonationModal({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) setQrisOpen(false);
   }, [open]);
+
+  useLockBodyScroll(open);
 
   if (!portalEl) return null;
 

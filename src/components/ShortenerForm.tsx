@@ -45,7 +45,13 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
         </div>
       )}
 
-      <div className="space-y-3">
+      <form 
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleShorten();
+        }}
+        className="space-y-3"
+      >
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
@@ -63,18 +69,17 @@ export default function ShortenerForm({ url, setUrl, slug, setSlug, loading, sho
         </div>
 
         <motion.button
+          type="submit"
           whileHover={buttonHover}
           whileTap={buttonTap}
           transition={buttonTransition}
-          onClick={() => {
-            void handleShorten();
-          }}
           disabled={!url.trim() || loading}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
           {loading ? "Shortening..." : "Shorten"}
         </motion.button>
+      </form>
 
         {error && (
           <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">
